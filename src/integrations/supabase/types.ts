@@ -109,40 +109,40 @@ export type Database = {
       }
       profiles: {
         Row: {
-          adventure_theme: string
-          ai_personality: string
+          avatar_url: string | null
           created_at: string | null
-          current_streak: number | null
+          currency: string
+          date_format: string | null
+          full_name: string | null
           id: string
-          level: number | null
-          longest_streak: number | null
-          total_xp: number | null
+          theme: string | null
+          timezone: string | null
           updated_at: string | null
           user_id: string | null
           username: string
         }
         Insert: {
-          adventure_theme: string
-          ai_personality: string
+          avatar_url?: string | null
           created_at?: string | null
-          current_streak?: number | null
+          currency?: string
+          date_format?: string | null
+          full_name?: string | null
           id?: string
-          level?: number | null
-          longest_streak?: number | null
-          total_xp?: number | null
+          theme?: string | null
+          timezone?: string | null
           updated_at?: string | null
           user_id?: string | null
           username: string
         }
         Update: {
-          adventure_theme?: string
-          ai_personality?: string
+          avatar_url?: string | null
           created_at?: string | null
-          current_streak?: number | null
+          currency?: string
+          date_format?: string | null
+          full_name?: string | null
           id?: string
-          level?: number | null
-          longest_streak?: number | null
-          total_xp?: number | null
+          theme?: string | null
+          timezone?: string | null
           updated_at?: string | null
           user_id?: string | null
           username?: string
