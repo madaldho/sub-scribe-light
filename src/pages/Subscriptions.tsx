@@ -107,17 +107,7 @@ const Subscriptions = () => {
           {filteredSubs.map((sub) => (
             <SubscriptionCard 
               key={sub.id} 
-              subscription={{
-                id: sub.id,
-                name: sub.name,
-                package: sub.description || "-",
-                billing: formatBillingCycle(sub.billing_cycle),
-                amount: formatCurrency(sub.price, sub.currency),
-                dueDate: format(new Date(sub.next_billing_date), "d MMM yyyy", { locale: localeId }),
-                category: sub.category,
-                status: formatStatus(sub.status),
-                logo: "🎯"
-              }} 
+              subscription={sub} 
             />
           ))}
         </div>

@@ -2,18 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { Calendar, MoreVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-interface Subscription {
-  id: string;
-  name: string;
-  package: string;
-  billing: string;
-  amount: string;
-  dueDate: string;
-  category: string;
-  status: "Aktif" | "Berhenti" | "Uji Coba";
-  logo: string;
-}
+import { Subscription } from "@/hooks/useSubscriptions";
+import { format, parseISO } from "date-fns";
+import { id } from "date-fns/locale";
 
 interface SubscriptionCardProps {
   subscription: Subscription;
@@ -23,9 +14,25 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
   const navigate = useNavigate();
 
   const statusColors = {
-    "Aktif": "text-success bg-success/10 border-success/30",
-    "Berhenti": "text-destructive bg-destructive/10 border-destructive/30",
-    "Uji Coba": "text-warning bg-warning/10 border-warning/30"
+    "active": "text-success bg-success/10 border-success/30",
+    "cancelled": "text-destructive bg-destructive/10 border-destructive/30",
+    "trial": "text-warning bg-warning/10 border-warning/30",
+    "paused": "text-muted bg-muted/10 border-muted/30"
+  };
+
+  const statusLabels = {
+    "active": "Aktif",
+    "cancelled": "Berhenti",
+    "trial": "Uji Coba",
+    "paused": "Dijeda"
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(amount);
   };
 
   return (
@@ -34,8 +41,14 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
       onClick={() => navigate(`/subscription/${subscription.id}`)}
     >
       <div className="flex items-start justify-between mb-4">
-        <div className="neumo-card p-4 rounded-2xl text-3xl bg-background-elevated">
-          {subscription.logo}
+        <div className="neumo-card p-4 rounded-2xl bg-background-elevated">
+          {subscription.logo_url ? (
+            <img src={subscription.logo_url} alt={subscription.name} className="w-12 h-12 object-contain" />
+          ) : (
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
+              {subscription.name.charAt(0)}
+            </div>
+          )}
         </div>
         
         <Button
@@ -44,7 +57,6 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
           className="neumo-card rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
           onClick={(e) => {
             e.stopPropagation();
-            // Handle menu
           }}
         >
           <MoreVertical className="h-4 w-4" />
@@ -55,8 +67,8 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
         <h3 className="text-xl font-bold text-foreground mb-1">
           {subscription.name}
         </h3>
-        <p className="text-sm text-foreground-muted">
-          {subscription.package} • {subscription.billing}
+        <p className="text-sm text-foreground-muted capitalize">
+          {subscription.description || subscription.billing_cycle}
         </p>
       </div>
 
@@ -66,9 +78,9 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
         </Badge>
         <Badge 
           variant="outline" 
-          className={statusColors[subscription.status]}
+          className={statusColors[subscription.status as keyof typeof statusColors]}
         >
-          {subscription.status}
+          {statusLabels[subscription.status as keyof typeof statusLabels]}
         </Badge>
       </div>
 
@@ -76,10 +88,12 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-foreground-muted">
             <Calendar className="h-4 w-4" />
-            <span className="text-sm">{subscription.dueDate}</span>
+            <span className="text-sm">
+              {format(parseISO(subscription.next_billing_date), 'd MMM yyyy', { locale: id })}
+            </span>
           </div>
           <span className="text-xl font-bold text-foreground">
-            {subscription.amount}
+            {formatCurrency(Number(subscription.price))}
           </span>
         </div>
       </div>
