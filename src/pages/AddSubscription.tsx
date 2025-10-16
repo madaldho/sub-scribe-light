@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,16 +6,61 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "sonner";
+import { useAddSubscription } from "@/hooks/useSubscriptions";
+import { addMonths, addYears, addWeeks, addDays } from "date-fns";
 
 const AddSubscription = () => {
   const navigate = useNavigate();
   const [period, setPeriod] = useState("monthly");
+  const addSubscription = useAddSubscription();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const calculateNextBillingDate = (startDate: string, billingCycle: string) => {
+    const start = new Date(startDate);
+    
+    switch (billingCycle) {
+      case 'daily':
+        return addDays(start, 1);
+      case 'weekly':
+        return addWeeks(start, 1);
+      case 'monthly':
+        return addMonths(start, 1);
+      case 'yearly':
+        return addYears(start, 1);
+      default:
+        return addMonths(start, 1);
+    }
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast.success("Langganan berhasil ditambahkan!");
-    navigate("/subscriptions");
+    const formData = new FormData(e.currentTarget);
+    
+    const name = formData.get("name") as string;
+    const description = formData.get("package") as string;
+    const price = parseFloat(formData.get("price") as string);
+    const currency = (formData.get("currency") as string) || "IDR";
+    const startDate = formData.get("startDate") as string;
+    const category = (formData.get("category") as string) || "lainnya";
+    const notes = formData.get("notes") as string;
+    
+    const nextBillingDate = calculateNextBillingDate(startDate, period);
+
+    addSubscription.mutate({
+      name,
+      description,
+      price,
+      currency,
+      billing_cycle: period,
+      start_date: startDate,
+      next_billing_date: nextBillingDate.toISOString().split('T')[0],
+      category,
+      notes,
+      status: 'active',
+    }, {
+      onSuccess: () => {
+        navigate("/subscriptions");
+      }
+    });
   };
 
   return (
@@ -50,6 +95,7 @@ const AddSubscription = () => {
               </Label>
               <Input
                 id="name"
+                name="name"
                 placeholder="contoh: Netflix, Spotify"
                 className="neumo-input h-12 border-0 focus-visible:ring-primary"
                 required
@@ -63,6 +109,7 @@ const AddSubscription = () => {
               </Label>
               <Input
                 id="package"
+                name="package"
                 placeholder="contoh: Premium, Pro, Basic"
                 className="neumo-input h-12 border-0 focus-visible:ring-primary"
               />
@@ -76,6 +123,7 @@ const AddSubscription = () => {
                 </Label>
                 <Input
                   id="price"
+                  name="price"
                   type="number"
                   placeholder="0"
                   className="neumo-input h-12 border-0 focus-visible:ring-primary"
@@ -89,7 +137,8 @@ const AddSubscription = () => {
                 </Label>
                 <Input
                   id="currency"
-                  defaultValue="Rp"
+                  name="currency"
+                  defaultValue="IDR"
                   className="neumo-input h-12 border-0 focus-visible:ring-primary"
                 />
               </div>
@@ -139,7 +188,9 @@ const AddSubscription = () => {
               </Label>
               <Input
                 id="startDate"
+                name="startDate"
                 type="date"
+                defaultValue={new Date().toISOString().split('T')[0]}
                 className="neumo-input h-12 border-0 focus-visible:ring-primary"
                 required
               />
@@ -152,7 +203,9 @@ const AddSubscription = () => {
               </Label>
               <Input
                 id="category"
+                name="category"
                 placeholder="contoh: Entertainment, Development"
+                defaultValue="lainnya"
                 className="neumo-input h-12 border-0 focus-visible:ring-primary"
               />
             </div>
@@ -164,6 +217,7 @@ const AddSubscription = () => {
               </Label>
               <Textarea
                 id="notes"
+                name="notes"
                 placeholder="Tambahkan catatan untuk langganan ini..."
                 className="neumo-input min-h-24 border-0 focus-visible:ring-primary resize-none"
               />
@@ -177,15 +231,17 @@ const AddSubscription = () => {
               variant="outline"
               onClick={() => navigate(-1)}
               className="neumo-card neumo-card-hover flex-1 h-14 rounded-2xl border-0"
+              disabled={addSubscription.isPending}
             >
               Batal
             </Button>
             <Button
               type="submit"
               className="neumo-card neumo-card-hover flex-1 h-14 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90"
+              disabled={addSubscription.isPending}
             >
               <Save className="mr-2 h-5 w-5" />
-              Simpan
+              {addSubscription.isPending ? "Menyimpan..." : "Simpan"}
             </Button>
           </div>
         </form>

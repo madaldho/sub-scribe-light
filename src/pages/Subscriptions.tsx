@@ -4,61 +4,45 @@ import { Search, Filter, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SubscriptionCard } from "@/components/subscriptions/SubscriptionCard";
-
-const mockSubscriptions = [
-  {
-    id: "1",
-    name: "Netflix",
-    package: "Premium",
-    billing: "Bulanan",
-    amount: "Rp 65.000",
-    dueDate: "25 Okt 2025",
-    category: "Entertainment",
-    status: "Aktif" as const,
-    logo: "🎬"
-  },
-  {
-    id: "2",
-    name: "Spotify",
-    package: "Family",
-    billing: "Bulanan",
-    amount: "Rp 85.000",
-    dueDate: "27 Okt 2025",
-    category: "Music",
-    status: "Aktif" as const,
-    logo: "🎵"
-  },
-  {
-    id: "3",
-    name: "Domain .com",
-    package: "Pro",
-    billing: "Tahunan",
-    amount: "Rp 350.000",
-    dueDate: "10 Des 2025",
-    category: "Development",
-    status: "Aktif" as const,
-    logo: "🌐"
-  },
-  {
-    id: "4",
-    name: "Adobe Creative",
-    package: "All Apps",
-    billing: "Bulanan",
-    amount: "Rp 350.000",
-    dueDate: "15 Nov 2025",
-    category: "Design",
-    status: "Berhenti" as const,
-    logo: "🎨"
-  }
-];
+import { useSubscriptions } from "@/hooks/useSubscriptions";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
+import { id as localeId } from "date-fns/locale";
 
 const Subscriptions = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const { data: subscriptions, isLoading } = useSubscriptions();
 
-  const filteredSubs = mockSubscriptions.filter(sub =>
+  const filteredSubs = subscriptions?.filter(sub =>
     sub.name.toLowerCase().includes(search.toLowerCase())
-  );
+  ) || [];
+
+  const formatBillingCycle = (cycle: string) => {
+    const cycles: Record<string, string> = {
+      daily: "Harian",
+      weekly: "Mingguan",
+      monthly: "Bulanan",
+      yearly: "Tahunan"
+    };
+    return cycles[cycle] || cycle;
+  };
+
+  const formatStatus = (status: string) => {
+    const statuses: Record<string, "Aktif" | "Berhenti" | "Uji Coba"> = {
+      active: "Aktif",
+      inactive: "Berhenti",
+      trial: "Uji Coba"
+    };
+    return statuses[status] || "Aktif";
+  };
+
+  const formatCurrency = (amount: number, currency: string) => {
+    if (currency === "IDR") {
+      return `Rp ${amount.toLocaleString("id-ID")}`;
+    }
+    return `${currency} ${amount}`;
+  };
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
@@ -107,10 +91,34 @@ const Subscriptions = () => {
       </header>
 
       {/* Subscriptions List */}
-      {filteredSubs.length > 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="neumo-card p-6">
+              <Skeleton className="h-16 w-16 rounded-2xl mb-4" />
+              <Skeleton className="h-6 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-1/2 mb-4" />
+              <Skeleton className="h-8 w-full" />
+            </div>
+          ))}
+        </div>
+      ) : filteredSubs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
           {filteredSubs.map((sub) => (
-            <SubscriptionCard key={sub.id} subscription={sub} />
+            <SubscriptionCard 
+              key={sub.id} 
+              subscription={{
+                id: sub.id,
+                name: sub.name,
+                package: sub.description || "-",
+                billing: formatBillingCycle(sub.billing_cycle),
+                amount: formatCurrency(sub.price, sub.currency),
+                dueDate: format(new Date(sub.next_billing_date), "d MMM yyyy", { locale: localeId }),
+                category: sub.category,
+                status: formatStatus(sub.status),
+                logo: "🎯"
+              }} 
+            />
           ))}
         </div>
       ) : (
@@ -122,8 +130,17 @@ const Subscriptions = () => {
             Tidak ada langganan
           </h3>
           <p className="text-foreground-muted mb-6">
-            Coba ubah kata kunci pencarian Anda
+            {search ? "Coba ubah kata kunci pencarian Anda" : "Mulai tambahkan langganan pertama Anda"}
           </p>
+          {!search && (
+            <Button
+              onClick={() => navigate("/add")}
+              className="neumo-card neumo-card-hover rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <Plus className="mr-2 h-5 w-5" />
+              Tambah Langganan
+            </Button>
+          )}
         </div>
       )}
     </div>
