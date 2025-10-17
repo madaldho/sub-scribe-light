@@ -60,7 +60,6 @@ const Subscriptions = () => {
           
           <Button 
             onClick={() => navigate("/add")}
-            className="neumo-card neumo-card-hover rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90"
             size="lg"
           >
             <Plus className="mr-2 h-5 w-5" />
@@ -81,9 +80,8 @@ const Subscriptions = () => {
           </div>
           
           <Button
-            variant="outline"
+            variant="secondary"
             size="lg"
-            className="neumo-card neumo-card-hover rounded-2xl border-0"
           >
             <Filter className="h-5 w-5" />
           </Button>
@@ -125,7 +123,6 @@ const Subscriptions = () => {
           {!search && (
             <Button
               onClick={() => navigate("/add")}
-              className="neumo-card neumo-card-hover rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Plus className="mr-2 h-5 w-5" />
               Tambah Langganan

@@ -37,7 +37,7 @@ const Settings = () => {
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="neumo-card neumo-card-hover rounded-xl mb-4 border-0"
+            className="mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Kembali
@@ -134,7 +134,6 @@ const Settings = () => {
               <Button
                 onClick={() => signOut()}
                 variant="outline"
-                className="neumo-card border-0"
               >
                 Keluar
               </Button>
@@ -166,7 +165,7 @@ const Settings = () => {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="neumo-card border-0">Batal</AlertDialogCancel>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
                     <AlertDialogAction 
                       onClick={handleDeleteAccount}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

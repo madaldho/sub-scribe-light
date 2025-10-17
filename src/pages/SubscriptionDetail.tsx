@@ -112,7 +112,7 @@ const SubscriptionDetail = () => {
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="neumo-card neumo-card-hover rounded-xl mb-4 border-0"
+            className="mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Kembali
@@ -140,9 +140,9 @@ const SubscriptionDetail = () => {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="icon"
-                    className="neumo-card neumo-card-hover rounded-xl border-0 text-destructive"
+                    className="text-destructive hover:text-destructive"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -155,7 +155,7 @@ const SubscriptionDetail = () => {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="neumo-card border-0">Batal</AlertDialogCancel>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
                     <AlertDialogAction 
                       onClick={handleDelete}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -229,7 +229,7 @@ const SubscriptionDetail = () => {
           <Button
             onClick={handleMarkPaid}
             disabled={markAsPaid.isPending}
-            className="neumo-card neumo-card-hover w-full h-14 rounded-2xl bg-success text-success-foreground hover:bg-success/90"
+            className="w-full h-14 bg-success text-success-foreground hover:bg-success/90"
           >
             <CheckCircle className="mr-2 h-5 w-5" />
             {markAsPaid.isPending ? "Memproses..." : "Tandai Sudah Bayar"}

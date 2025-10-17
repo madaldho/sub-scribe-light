@@ -71,7 +71,7 @@ const AddSubscription = () => {
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="neumo-card neumo-card-hover rounded-xl mb-4 border-0"
+            className="mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Kembali
@@ -230,14 +230,14 @@ const AddSubscription = () => {
               type="button"
               variant="outline"
               onClick={() => navigate(-1)}
-              className="neumo-card neumo-card-hover flex-1 h-14 rounded-2xl border-0"
+              className="flex-1 h-14"
               disabled={addSubscription.isPending}
             >
               Batal
             </Button>
             <Button
               type="submit"
-              className="neumo-card neumo-card-hover flex-1 h-14 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90"
+              className="flex-1 h-14"
               disabled={addSubscription.isPending}
             >
               <Save className="mr-2 h-5 w-5" />
