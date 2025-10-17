@@ -45,15 +45,15 @@ const Subscriptions = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <header className="mb-8">
-        <div className="flex items-center justify-between mb-6">
+      <header className="mb-6">
+        <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
               Langganan
             </h1>
-            <p className="text-foreground-muted">
+            <p className="text-muted-foreground">
               {filteredSubs.length} langganan ditemukan
             </p>
           </div>
@@ -70,12 +70,12 @@ const Subscriptions = () => {
         {/* Search & Filter */}
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Cari langganan..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="neumo-input pl-12 h-14 text-base border-0 focus-visible:ring-primary"
+              className="pl-10 h-12 border-border focus-visible:ring-primary"
             />
           </div>
           
@@ -90,18 +90,18 @@ const Subscriptions = () => {
 
       {/* Subscriptions List */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="neumo-card p-6">
-              <Skeleton className="h-16 w-16 rounded-2xl mb-4" />
-              <Skeleton className="h-6 w-3/4 mb-2" />
-              <Skeleton className="h-4 w-1/2 mb-4" />
-              <Skeleton className="h-8 w-full" />
+            <div key={i} className="bg-card border border-border rounded-lg p-4">
+              <Skeleton className="h-12 w-12 rounded-lg mb-3" />
+              <Skeleton className="h-5 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-1/2 mb-3" />
+              <Skeleton className="h-6 w-full" />
             </div>
           ))}
         </div>
       ) : filteredSubs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredSubs.map((sub) => (
             <SubscriptionCard 
               key={sub.id} 

@@ -30,23 +30,14 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <header className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(-1)}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Kembali
-          </Button>
-          
+        <header className="mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
             Pengaturan
           </h1>
-          <p className="text-foreground-muted">
+          <p className="text-muted-foreground">
             Kelola preferensi akun Anda
           </p>
         </header>

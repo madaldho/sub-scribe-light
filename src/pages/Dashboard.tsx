@@ -42,14 +42,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
-      <header className="mb-8">
+    <div className="p-4 md:p-6 lg:p-8">
+      <header className="mb-6">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
               Dashboard
             </h1>
-            <p className="text-foreground-muted">
+            <p className="text-muted-foreground">
               Ringkasan langganan dan pengeluaran Anda
             </p>
           </div>
@@ -58,7 +58,6 @@ export default function Dashboard() {
             <Button 
               onClick={() => navigate("/subscriptions")}
               variant="outline"
-              className="neumo-card border-0 hover:shadow-neumo-lg"
             >
               <span className="hidden sm:inline">Lihat Semua</span>
               <ArrowUpRight className="h-4 w-4 sm:ml-2" />
@@ -66,16 +65,15 @@ export default function Dashboard() {
             
             <Button 
               onClick={() => navigate("/add")}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-neumo-md hover:shadow-neumo-lg"
             >
               <Plus className="h-5 w-5 sm:mr-2" />
-              <span className="hidden sm:inline">Tambah Langganan</span>
+              <span className="hidden sm:inline">Tambah</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatsCard
           title="Total Langganan"
           value={activeSubscriptions.length.toString()}
@@ -102,7 +100,7 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CategoryChart subscriptions={subscriptions} />
         <UpcomingSubscriptions subscriptions={subscriptions} />
       </div>
