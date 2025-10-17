@@ -18,26 +18,26 @@ export const StatsCard = ({
   trend 
 }: StatsCardProps) => {
   return (
-    <div className="neumo-card neumo-card-hover p-6">
+    <div className="neumo-card p-6 transition-all duration-300 hover:shadow-neumo-lg">
       <div className="flex items-start justify-between mb-4">
-        <div className="neumo-card p-3 rounded-xl bg-background-elevated">
+        <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
           <Icon className="h-6 w-6 text-primary" />
         </div>
         {change && (
           <span className={`text-sm font-medium px-3 py-1 rounded-lg ${
             trend === "up" 
-              ? "text-success bg-success/10" 
-              : "text-destructive bg-destructive/10"
+              ? "text-success-foreground bg-success/20" 
+              : "text-destructive-foreground bg-destructive/20"
           }`}>
             {change}
           </span>
         )}
       </div>
       
-      <h3 className="text-foreground-muted text-sm font-medium mb-1">{title}</h3>
+      <h3 className="text-muted-foreground text-sm font-medium mb-2 uppercase tracking-wide">{title}</h3>
       <p className="text-3xl font-bold text-foreground mb-1">{value}</p>
       {subtitle && (
-        <p className="text-sm text-foreground-muted">{subtitle}</p>
+        <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
       )}
     </div>
   );
