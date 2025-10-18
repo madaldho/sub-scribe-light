@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, DollarSign, Bell, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/hooks/useAuth";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,14 +22,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { PaymentMethodsSection } from "@/components/settings/PaymentMethodsSection";
+import { useAuth } from "@/hooks/useAuth";
+import { LogOut, Trash2 } from "lucide-react";
 
-const Settings = () => {
-  const navigate = useNavigate();
+export default function Settings() {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [currency, setCurrency] = useState("IDR");
 
+  const handleSignOut = () => {
+    signOut();
+  };
+
   const handleDeleteAccount = async () => {
-    // TODO: Implement account deletion
     await signOut();
   };
 
@@ -38,140 +48,105 @@ const Settings = () => {
             Pengaturan
           </h1>
           <p className="text-muted-foreground">
-            Kelola preferensi akun Anda
+            Kelola preferensi dan akun Anda
           </p>
         </header>
 
+      <div className="grid gap-6">
         {/* Profile Section */}
-        <div className="neumo-card p-6 md:p-8 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <User className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-bold text-foreground">Profil</h2>
-          </div>
-
-          <div className="space-y-4">
+        <Card className="border-border">
+          <CardHeader>
+            <CardTitle className="text-foreground">Profil</CardTitle>
+            <CardDescription>Informasi akun Anda</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground">
-                Email
-              </Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
                 value={user?.email || ""}
                 disabled
-                className="neumo-input h-12 border-0 opacity-60"
+                className="border-border"
               />
-              <p className="text-xs text-foreground-muted">
-                Email tidak dapat diubah
-              </p>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
+
+        {/* Payment Methods Section */}
+        <PaymentMethodsSection />
 
         {/* Preferences Section */}
-        <div className="neumo-card p-6 md:p-8 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <DollarSign className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-bold text-foreground">Preferensi</h2>
-          </div>
-
-          <div className="space-y-4">
+        <Card className="border-border">
+          <CardHeader>
+            <CardTitle className="text-foreground">Preferensi</CardTitle>
+            <CardDescription>Atur preferensi aplikasi Anda</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="currency" className="text-foreground">
-                Mata Uang Default
-              </Label>
-              <Input
-                id="currency"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="neumo-input h-12 border-0 focus-visible:ring-primary"
-              />
-              <p className="text-xs text-foreground-muted">
-                Mata uang yang digunakan untuk langganan baru
-              </p>
+              <Label htmlFor="currency">Mata Uang Default</Label>
+              <Select value={currency} onValueChange={setCurrency}>
+                <SelectTrigger id="currency" className="border-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border z-50">
+                  <SelectItem value="IDR">IDR (Rupiah)</SelectItem>
+                  <SelectItem value="USD">USD (Dollar)</SelectItem>
+                  <SelectItem value="EUR">EUR (Euro)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* Notifications Section */}
-        <div className="neumo-card p-6 md:p-8 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <Bell className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-bold text-foreground">Notifikasi</h2>
-          </div>
+        {/* Actions Section */}
+        <Card className="border-border">
+          <CardHeader>
+            <CardTitle className="text-foreground">Aksi Akun</CardTitle>
+            <CardDescription>Kelola akun Anda</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4" />
+              Keluar
+            </Button>
 
-          <div className="space-y-4">
-            <p className="text-foreground-muted">
-              Fitur notifikasi akan segera hadir. Anda akan dapat mengatur pengingat untuk pembayaran yang akan datang.
-            </p>
-          </div>
-        </div>
-
-        {/* Danger Zone */}
-        <div className="neumo-card p-6 md:p-8 border-2 border-destructive/20">
-          <div className="flex items-center gap-3 mb-6">
-            <Trash2 className="h-5 w-5 text-destructive" />
-            <h2 className="text-xl font-bold text-destructive">Zona Berbahaya</h2>
-          </div>
-
-          <Separator className="my-4 bg-border" />
-
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-foreground mb-2">Keluar dari Akun</h3>
-              <p className="text-sm text-foreground-muted mb-4">
-                Keluar dari sesi Anda saat ini
-              </p>
-              <Button
-                onClick={() => signOut()}
-                variant="outline"
-              >
-                Keluar
-              </Button>
-            </div>
-
-            <Separator className="my-4 bg-border" />
-
-            <div>
-              <h3 className="font-semibold text-destructive mb-2">Hapus Akun</h3>
-              <p className="text-sm text-foreground-muted mb-4">
-                Hapus akun Anda secara permanen beserta semua data
-              </p>
-              
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="destructive"
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Hapus Akun
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-card border-border">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-foreground">Hapus Akun</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus secara permanen.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    className="bg-destructive hover:bg-destructive/90"
                   >
                     Hapus Akun
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className="neumo-card border-0">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Anda yakin?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Tindakan ini tidak dapat dibatalkan. Ini akan menghapus akun Anda secara permanen 
-                      dan menghapus semua data termasuk langganan, riwayat pembayaran, kategori, dan metode pembayaran.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Batal</AlertDialogCancel>
-                    <AlertDialogAction 
-                      onClick={handleDeleteAccount}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    >
-                      Ya, Hapus Akun Saya
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </div>
-        </div>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardContent>
+        </Card>
       </div>
     </div>
+    </div>
   );
-};
-
-export default Settings;
+}
