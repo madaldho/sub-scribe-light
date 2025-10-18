@@ -1,4 +1,4 @@
-import { Home, CreditCard, Plus, Settings, LogOut } from "lucide-react";
+import { Home, CreditCard, Plus, Settings, LogOut, TrendingUp } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -18,6 +18,7 @@ const navItems = [
   { title: "Dashboard", url: "/", icon: Home },
   { title: "Langganan", url: "/subscriptions", icon: CreditCard },
   { title: "Tambah Baru", url: "/add", icon: Plus },
+  { title: "Analisis", url: "/analytics", icon: TrendingUp },
   { title: "Pengaturan", url: "/settings", icon: Settings },
 ];
 

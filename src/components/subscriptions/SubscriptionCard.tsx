@@ -1,10 +1,27 @@
 import { useNavigate } from "react-router-dom";
-import { Calendar, MoreVertical } from "lucide-react";
+import { Calendar, Edit, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Subscription } from "@/hooks/useSubscriptions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Subscription, useDeleteSubscription } from "@/hooks/useSubscriptions";
 import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
+import { useState } from "react";
 
 interface SubscriptionCardProps {
   subscription: Subscription;
@@ -12,6 +29,8 @@ interface SubscriptionCardProps {
 
 export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
   const navigate = useNavigate();
+  const deleteSubscription = useDeleteSubscription();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const statusColors = {
     "active": "text-success bg-success/10 border-success/30",
@@ -49,16 +68,30 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
           </div>
         )}
         
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <MoreVertical className="h-4 w-4" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+            <DropdownMenuItem onClick={() => navigate(`/subscription/${subscription.id}`)}>
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => setShowDeleteDialog(true)}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Hapus
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="mb-3">
@@ -95,6 +128,29 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
           </span>
         </div>
       </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Langganan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus langganan {subscription.name}? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                deleteSubscription.mutate(subscription.id);
+                setShowDeleteDialog(false);
+              }}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

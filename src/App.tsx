@@ -11,6 +11,7 @@ import Subscriptions from "./pages/Subscriptions";
 import AddSubscription from "./pages/AddSubscription";
 import SubscriptionDetail from "./pages/SubscriptionDetail";
 import Settings from "./pages/Settings";
+import Analytics from "./pages/Analytics";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/subscriptions" element={<ProtectedRoute><MainLayout><Subscriptions /></MainLayout></ProtectedRoute>} />
             <Route path="/add" element={<ProtectedRoute><MainLayout><AddSubscription /></MainLayout></ProtectedRoute>} />
             <Route path="/subscription/:id" element={<ProtectedRoute><MainLayout><SubscriptionDetail /></MainLayout></ProtectedRoute>} />
+            <Route path="/analytics" element={<ProtectedRoute><MainLayout><Analytics /></MainLayout></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

@@ -1,18 +1,28 @@
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useAddSubscription } from "@/hooks/useSubscriptions";
+import { usePaymentMethods } from "@/hooks/usePaymentMethods";
+import { ServiceSuggestions } from "@/components/subscriptions/ServiceSuggestions";
+import { LogoUploader } from "@/components/subscriptions/LogoUploader";
 import { addMonths, addYears, addWeeks, addDays } from "date-fns";
 
 const AddSubscription = () => {
   const navigate = useNavigate();
   const [period, setPeriod] = useState("monthly");
+  const [autoRenew, setAutoRenew] = useState(true);
+  const [logoUrl, setLogoUrl] = useState("");
+  const [serviceName, setServiceName] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const addSubscription = useAddSubscription();
+  const { data: paymentMethods = [] } = usePaymentMethods();
 
   const calculateNextBillingDate = (startDate: string, billingCycle: string) => {
     const start = new Date(startDate);
@@ -42,6 +52,7 @@ const AddSubscription = () => {
     const startDate = formData.get("startDate") as string;
     const category = (formData.get("category") as string) || "lainnya";
     const notes = formData.get("notes") as string;
+    const paymentMethod = formData.get("paymentMethod") as string;
     
     const nextBillingDate = calculateNextBillingDate(startDate, period);
 
@@ -56,6 +67,10 @@ const AddSubscription = () => {
       category,
       notes,
       status: 'active',
+      logo_url: logoUrl || undefined,
+      payment_method: paymentMethod || undefined,
+      auto_renew: autoRenew,
+      last_payment_date: startDate,
     }, {
       onSuccess: () => {
         navigate("/subscriptions");
@@ -78,7 +93,38 @@ const AddSubscription = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Service Suggestions */}
+          {showSuggestions && (
+            <div className="neumo-card p-6">
+              <ServiceSuggestions 
+                onSelect={(service) => {
+                  setServiceName(service.name);
+                  setLogoUrl(service.logo);
+                  setShowSuggestions(false);
+                  const nameInput = document.getElementById('name') as HTMLInputElement;
+                  if (nameInput) nameInput.value = service.name;
+                  const categoryInput = document.getElementById('category') as HTMLInputElement;
+                  if (categoryInput) categoryInput.value = service.category;
+                }}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full mt-4"
+                onClick={() => setShowSuggestions(false)}
+              >
+                Atau isi manual
+              </Button>
+            </div>
+          )}
+
           <div className="neumo-card p-6 space-y-6">
+            {/* Logo Upload */}
+            <LogoUploader 
+              onUploadComplete={setLogoUrl}
+              currentLogo={logoUrl}
+            />
+
             {/* Service Name */}
             <div className="space-y-2">
               <Label htmlFor="name" className="text-foreground">
@@ -90,6 +136,8 @@ const AddSubscription = () => {
                 placeholder="contoh: Netflix, Spotify"
                 className="neumo-input h-12 border-0 focus-visible:ring-primary"
                 required
+                value={serviceName}
+                onChange={(e) => setServiceName(e.target.value)}
               />
             </div>
 
@@ -198,6 +246,39 @@ const AddSubscription = () => {
                 placeholder="contoh: Entertainment, Development"
                 defaultValue="lainnya"
                 className="neumo-input h-12 border-0 focus-visible:ring-primary"
+              />
+            </div>
+
+            {/* Payment Method */}
+            <div className="space-y-2">
+              <Label htmlFor="paymentMethod" className="text-foreground">
+                Metode Pembayaran (Opsional)
+              </Label>
+              <Select name="paymentMethod">
+                <SelectTrigger className="neumo-input h-12 border-0">
+                  <SelectValue placeholder="Pilih metode pembayaran" />
+                </SelectTrigger>
+                <SelectContent>
+                  {paymentMethods.map((method) => (
+                    <SelectItem key={method.id} value={method.name}>
+                      {method.name} ({method.provider})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Auto Renew */}
+            <div className="flex items-center justify-between p-4 neumo-card rounded-lg">
+              <div className="space-y-0.5">
+                <Label className="text-foreground font-medium">Auto Renewal</Label>
+                <p className="text-xs text-muted-foreground">
+                  Perpanjang otomatis setiap periode
+                </p>
+              </div>
+              <Switch
+                checked={autoRenew}
+                onCheckedChange={setAutoRenew}
               />
             </div>
 

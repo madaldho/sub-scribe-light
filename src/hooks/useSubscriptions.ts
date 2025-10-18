@@ -20,6 +20,8 @@ export interface Subscription {
   logo_url?: string;
   brand_color?: string;
   badge_color?: string;
+  auto_renew?: boolean;
+  last_payment_date?: string;
   user_id: string;
   created_at: string;
   updated_at: string;

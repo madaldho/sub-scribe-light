@@ -246,6 +246,7 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          auto_renew: boolean | null
           badge_color: string | null
           billing_cycle: string
           brand_color: string | null
@@ -254,6 +255,7 @@ export type Database = {
           currency: string
           description: string | null
           id: string
+          last_payment_date: string | null
           logo_url: string | null
           name: string
           next_billing_date: string
@@ -267,6 +269,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          auto_renew?: boolean | null
           badge_color?: string | null
           billing_cycle?: string
           brand_color?: string | null
@@ -275,6 +278,7 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          last_payment_date?: string | null
           logo_url?: string | null
           name: string
           next_billing_date: string
@@ -288,6 +292,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          auto_renew?: boolean | null
           badge_color?: string | null
           billing_cycle?: string
           brand_color?: string | null
@@ -296,6 +301,7 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          last_payment_date?: string | null
           logo_url?: string | null
           name?: string
           next_billing_date?: string

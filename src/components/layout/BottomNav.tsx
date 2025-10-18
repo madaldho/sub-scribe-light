@@ -1,10 +1,11 @@
-import { Home, CreditCard, Plus, Settings } from "lucide-react";
+import { Home, CreditCard, Plus, Settings, TrendingUp } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 const navItems = [
   { title: "Home", url: "/", icon: Home },
   { title: "Langganan", url: "/subscriptions", icon: CreditCard },
-  { title: "Tambah", url: "/add", icon: Plus },
+  { title: "Tambah", url: "/add", icon: Plus, isCenterButton: true },
+  { title: "Analisis", url: "/analytics", icon: TrendingUp },
   { title: "Pengaturan", url: "/settings", icon: Settings },
 ];
 
@@ -20,9 +21,35 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       <div className="neumo-card border-t border-border bg-card/95 backdrop-blur-lg rounded-t-3xl pb-safe">
-        <div className="flex items-center justify-around px-2 py-3">
+        <div className="flex items-end justify-around px-2 py-3 relative">
           {navItems.map((item) => {
             const active = isActive(item.url);
+            const isCenterButton = item.isCenterButton;
+            
+            if (isCenterButton) {
+              return (
+                <NavLink
+                  key={item.title}
+                  to={item.url}
+                  end={item.url === "/"}
+                  className="absolute left-1/2 -translate-x-1/2 -top-6"
+                >
+                  <div className={`
+                    flex flex-col items-center gap-1 p-4 rounded-2xl transition-all duration-200 shadow-neumo-lg
+                    ${active 
+                      ? "bg-primary text-primary-foreground scale-110" 
+                      : "bg-card border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-110"
+                    }
+                  `}>
+                    <item.icon className="h-6 w-6 stroke-[2.5]" />
+                  </div>
+                  <span className="text-xs font-medium text-center block mt-1 text-foreground">
+                    {item.title}
+                  </span>
+                </NavLink>
+              );
+            }
+            
             return (
               <NavLink
                 key={item.title}
