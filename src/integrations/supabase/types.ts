@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      currency_rates: {
+        Row: {
+          from_currency: string
+          id: string
+          rate: number
+          to_currency: string
+          updated_at: string | null
+        }
+        Insert: {
+          from_currency: string
+          id?: string
+          rate: number
+          to_currency: string
+          updated_at?: string | null
+        }
+        Update: {
+          from_currency?: string
+          id?: string
+          rate?: number
+          to_currency?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           application_url: string | null
@@ -73,6 +97,53 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          scheduled_for: string | null
+          sent_at: string | null
+          subscription_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          scheduled_for?: string | null
+          sent_at?: string | null
+          subscription_id?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          scheduled_for?: string | null
+          sent_at?: string | null
+          subscription_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payment_history: {
         Row: {
@@ -217,6 +288,41 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_audit_log: {
+        Row: {
+          action: string
+          changes: Json | null
+          created_at: string | null
+          id: string
+          subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          changes?: Json | null
+          created_at?: string | null
+          id?: string
+          subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          changes?: Json | null
+          created_at?: string | null
+          id?: string
+          subscription_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_audit_log_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_categories: {
         Row: {
           color: string | null
@@ -255,6 +361,7 @@ export type Database = {
           currency: string
           description: string | null
           id: string
+          is_trial: boolean | null
           last_payment_date: string | null
           logo_url: string | null
           name: string
@@ -265,6 +372,7 @@ export type Database = {
           price: number
           start_date: string
           status: string
+          trial_end_date: string | null
           updated_at: string
           user_id: string
         }
@@ -278,6 +386,7 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          is_trial?: boolean | null
           last_payment_date?: string | null
           logo_url?: string | null
           name: string
@@ -288,6 +397,7 @@ export type Database = {
           price: number
           start_date?: string
           status?: string
+          trial_end_date?: string | null
           updated_at?: string
           user_id: string
         }
@@ -301,6 +411,7 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          is_trial?: boolean | null
           last_payment_date?: string | null
           logo_url?: string | null
           name?: string
@@ -311,6 +422,7 @@ export type Database = {
           price?: number
           start_date?: string
           status?: string
+          trial_end_date?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -336,6 +448,36 @@ export type Database = {
           id?: string
           name?: string
           url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          has_completed_onboarding: boolean | null
+          id: string
+          notification_preferences: Json | null
+          theme: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          has_completed_onboarding?: boolean | null
+          id?: string
+          notification_preferences?: Json | null
+          theme?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          has_completed_onboarding?: boolean | null
+          id?: string
+          notification_preferences?: Json | null
+          theme?: string | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []

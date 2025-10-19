@@ -22,6 +22,7 @@ import { Subscription, useDeleteSubscription } from "@/hooks/useSubscriptions";
 import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
 import { useState } from "react";
+import { TrialBadge } from "./TrialBadge";
 
 interface SubscriptionCardProps {
   subscription: Subscription;
@@ -113,6 +114,12 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
         >
           {statusLabels[subscription.status as keyof typeof statusLabels]}
         </Badge>
+        {subscription.is_trial && subscription.trial_end_date && (
+          <TrialBadge 
+            isTrial={subscription.is_trial} 
+            trialEndDate={subscription.trial_end_date} 
+          />
+        )}
       </div>
 
       <div className="pt-3 border-t border-border">

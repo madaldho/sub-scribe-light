@@ -23,12 +23,17 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { PaymentMethodsSection } from "@/components/settings/PaymentMethodsSection";
+import { BackupRestore } from "@/components/backup/BackupRestore";
+import { useUserPreferences, useUpdateUserPreferences } from "@/hooks/useUserPreferences";
 import { useAuth } from "@/hooks/useAuth";
 import { LogOut, Trash2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export default function Settings() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { data: preferences } = useUserPreferences();
+  const updatePreferences = useUpdateUserPreferences();
   const [currency, setCurrency] = useState("IDR");
 
   const handleSignOut = () => {
@@ -75,6 +80,40 @@ export default function Settings() {
 
         {/* Payment Methods Section */}
         <PaymentMethodsSection />
+
+        {/* Notification Settings */}
+        <Card className="border-border">
+          <CardHeader>
+            <CardTitle className="text-foreground">Notifikasi</CardTitle>
+            <CardDescription>Atur pengingat pembayaran</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Pengingat Email</p>
+                <p className="text-sm text-muted-foreground">Terima notifikasi via email</p>
+              </div>
+              <Switch
+                checked={preferences?.notification_preferences?.email ?? true}
+                onCheckedChange={(checked) => {
+                  const current = preferences?.notification_preferences || { email: true, push: false, days_before: [7, 3, 1] };
+                  updatePreferences.mutate({
+                    notification_preferences: { ...current, email: checked }
+                  });
+                }}
+              />
+            </div>
+            <div>
+              <p className="font-medium mb-2">Kirim pengingat</p>
+              <p className="text-sm text-muted-foreground">
+                Saat ini: {preferences?.notification_preferences?.days_before?.join(', ') || '7, 3, 1'} hari sebelum jatuh tempo
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Backup & Restore */}
+        <BackupRestore />
 
         {/* Preferences Section */}
         <Card className="border-border">

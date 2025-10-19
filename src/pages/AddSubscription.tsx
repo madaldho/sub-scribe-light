@@ -21,6 +21,8 @@ const AddSubscription = () => {
   const [period, setPeriod] = useState("monthly");
   const [autoRenew, setAutoRenew] = useState(true);
   const [logoUrl, setLogoUrl] = useState("");
+  const [isTrial, setIsTrial] = useState(false);
+  const [trialEndDate, setTrialEndDate] = useState("");
   const [serviceName, setServiceName] = useState("");
   const addSubscription = useAddSubscription();
   const { data: paymentMethods = [] } = usePaymentMethods();
@@ -225,6 +227,36 @@ const AddSubscription = () => {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Free Trial */}
+      <div className="flex items-center justify-between p-4 neumo-card rounded-lg">
+        <div className="space-y-0.5">
+          <Label className="text-foreground font-medium">Free Trial</Label>
+          <p className="text-xs text-muted-foreground">
+            Tandai sebagai masa percobaan gratis
+          </p>
+        </div>
+        <Switch
+          checked={isTrial}
+          onCheckedChange={setIsTrial}
+        />
+      </div>
+
+      {isTrial && (
+        <div className="space-y-2">
+          <Label htmlFor="trialEndDate" className="text-foreground">
+            Tanggal Berakhir Trial
+          </Label>
+          <Input
+            id="trialEndDate"
+            type="date"
+            value={trialEndDate}
+            onChange={(e) => setTrialEndDate(e.target.value)}
+            required={isTrial}
+            className="neumo-input border-0 focus-visible:ring-primary"
+          />
+        </div>
+      )}
 
       {/* Auto Renew */}
       <div className="flex items-center justify-between p-4 neumo-card rounded-lg">
