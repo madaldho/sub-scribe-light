@@ -46,7 +46,7 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen p-4 md:p-6 lg:p-8 pt-6 md:pt-8">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto px-0">
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
@@ -88,8 +88,8 @@ export default function Settings() {
             <CardDescription>Atur pengingat pembayaran</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
                 <p className="font-medium">Pengingat Email</p>
                 <p className="text-sm text-muted-foreground">Terima notifikasi via email</p>
               </div>
@@ -101,6 +101,7 @@ export default function Settings() {
                     notification_preferences: { ...current, email: checked }
                   });
                 }}
+                className="flex-shrink-0"
               />
             </div>
             <div>
@@ -149,6 +150,7 @@ export default function Settings() {
               variant="outline"
               className="w-full justify-start gap-2"
               onClick={handleSignOut}
+              aria-label="Keluar dari akun"
             >
               <LogOut className="h-4 w-4" />
               Keluar

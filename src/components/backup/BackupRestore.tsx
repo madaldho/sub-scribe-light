@@ -89,15 +89,15 @@ export function BackupRestore() {
           </AlertDescription>
         </Alert>
 
-        <div className="flex gap-2">
-          <Button onClick={handleBackup} className="flex-1">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <Button onClick={handleBackup} className="flex-1 w-full">
             <Download className="h-4 w-4 mr-2" />
             Download Backup
           </Button>
 
           <Button
             variant="outline"
-            className="flex-1 relative"
+            className="flex-1 w-full relative"
             disabled={isRestoring}
           >
             <Upload className="h-4 w-4 mr-2" />

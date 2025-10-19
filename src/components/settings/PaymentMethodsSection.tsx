@@ -59,14 +59,14 @@ export function PaymentMethodsSection() {
   return (
     <Card className="border-border">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex-1 min-w-0">
             <CardTitle className="text-foreground">Metode Pembayaran</CardTitle>
             <CardDescription>Kelola metode pembayaran untuk langganan Anda</CardDescription>
           </div>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="gap-2">
+              <Button size="sm" className="gap-2 w-full sm:w-auto flex-shrink-0">
                 <Plus className="h-4 w-4" />
                 Tambah
               </Button>
@@ -155,25 +155,26 @@ export function PaymentMethodsSection() {
             {paymentMethods.map((method) => (
               <div
                 key={method.id}
-                className="flex items-center justify-between p-4 rounded-lg border border-border hover:border-primary/30 transition-colors"
+                className="flex items-center justify-between gap-3 p-4 rounded-lg border border-border hover:border-primary/30 transition-colors"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: method.color + '20', color: method.color }}
                   >
                     <CreditCard className="h-5 w-5" />
                   </div>
-                  <div>
-                    <p className="font-medium text-foreground">{method.name}</p>
-                    <p className="text-sm text-muted-foreground">{method.provider} • {method.type}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-foreground truncate">{method.name}</p>
+                    <p className="text-sm text-muted-foreground truncate">{method.provider} • {method.type}</p>
                   </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setDeleteId(method.id)}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  aria-label={`Hapus metode pembayaran ${method.name}`}
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
