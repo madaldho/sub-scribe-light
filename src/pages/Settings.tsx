@@ -150,6 +150,7 @@ export default function Settings() {
               variant="outline"
               className="w-full justify-start gap-2"
               onClick={handleSignOut}
+              aria-label="Keluar dari akun"
             >
               <LogOut className="h-4 w-4" />
               Keluar

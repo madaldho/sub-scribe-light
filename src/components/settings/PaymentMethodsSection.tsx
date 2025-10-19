@@ -173,6 +173,7 @@ export function PaymentMethodsSection() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setDeleteId(method.id)}
+                  aria-label={`Hapus metode pembayaran ${method.name}`}
                   className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
                 >
                   <Trash2 className="h-4 w-4" />
