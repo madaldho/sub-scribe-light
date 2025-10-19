@@ -74,7 +74,7 @@ const SubscriptionDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
+      <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8 pt-6 md:pt-8">
         <div className="max-w-4xl mx-auto">
           <Skeleton className="h-12 w-32 mb-8" />
           <div className="neumo-card p-6 md:p-8 mb-6">
@@ -89,7 +89,7 @@ const SubscriptionDetail = () => {
 
   if (!subscription) {
     return (
-      <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
+      <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8 pt-6 md:pt-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl font-bold text-foreground mb-4">Langganan tidak ditemukan</h1>
           <Button onClick={() => navigate("/subscriptions")}>Kembali</Button>
@@ -105,11 +105,11 @@ const SubscriptionDetail = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen p-4 md:p-6 lg:p-8 pt-6 md:pt-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <header className="mb-6">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Detail Langganan</h1>
+        <header className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Detail Langganan</h1>
         </header>
 
         {/* Main Info Card */}

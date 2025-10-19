@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Save, Lightbulb, PenLine, Settings as SettingsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,19 @@ const AddSubscription = () => {
   const [serviceName, setServiceName] = useState("");
   const addSubscription = useAddSubscription();
   const { data: paymentMethods = [] } = usePaymentMethods();
+  const formFieldsRef = useRef<HTMLDivElement>(null);
+
+  // Smooth scroll to form fields when service is selected
+  useEffect(() => {
+    if (serviceName && formFieldsRef.current) {
+      setTimeout(() => {
+        formFieldsRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
+      }, 100);
+    }
+  }, [serviceName]);
 
   const calculateNextBillingDate = (startDate: string, billingCycle: string) => {
     const start = new Date(startDate);
@@ -288,10 +301,10 @@ const AddSubscription = () => {
   );
 
   return (
-    <div className="p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen p-4 md:p-6 lg:p-8 pt-6 md:pt-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <header className="mb-6">
+        <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
             Tambah Langganan
           </h1>
@@ -302,9 +315,9 @@ const AddSubscription = () => {
 
         {/* Mode Selection */}
         {mode === "choose" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <Card
-              className="p-8 cursor-pointer border-2 border-border hover:border-primary transition-all group text-center"
+              className="p-6 md:p-8 cursor-pointer border-2 border-border hover:border-primary transition-all group text-center"
               onClick={() => setMode("smart")}
             >
               <Lightbulb className="h-12 w-12 mx-auto mb-4 text-primary group-hover:scale-110 transition-transform" />
@@ -315,7 +328,7 @@ const AddSubscription = () => {
             </Card>
 
             <Card
-              className="p-8 cursor-pointer border-2 border-border hover:border-primary transition-all group text-center"
+              className="p-6 md:p-8 cursor-pointer border-2 border-border hover:border-primary transition-all group text-center"
               onClick={() => setMode("manual")}
             >
               <PenLine className="h-12 w-12 mx-auto mb-4 text-primary group-hover:scale-110 transition-transform" />
@@ -330,7 +343,7 @@ const AddSubscription = () => {
         {/* Smart Suggestions Mode */}
         {mode === "smart" && (
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="neumo-card p-6">
+            <div className="neumo-card p-4 md:p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-foreground">Pilih Layanan</h3>
                 <Button
@@ -354,7 +367,7 @@ const AddSubscription = () => {
 
             {serviceName && (
               <>
-                <div className="neumo-card p-6 space-y-6">
+                <div ref={formFieldsRef} className="neumo-card p-4 md:p-6 space-y-6 scroll-mt-6">
                   {/* Service Name (readonly after selection) */}
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-foreground">
@@ -373,7 +386,7 @@ const AddSubscription = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3">
+                <div className="flex gap-3 pb-6">
                   <Button
                     type="button"
                     variant="outline"
@@ -382,14 +395,14 @@ const AddSubscription = () => {
                       setLogoUrl("");
                       setMode("choose");
                     }}
-                    className="flex-1 h-14"
+                    className="flex-1 h-12 md:h-14"
                     disabled={addSubscription.isPending}
                   >
                     Batal
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1 h-14"
+                    className="flex-1 h-12 md:h-14"
                     disabled={addSubscription.isPending}
                   >
                     <Save className="mr-2 h-5 w-5" />
@@ -404,7 +417,7 @@ const AddSubscription = () => {
         {/* Manual Mode */}
         {mode === "manual" && (
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="neumo-card p-6 space-y-6">
+            <div className="neumo-card p-4 md:p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium text-foreground">Form Manual</h3>
                 <Button
@@ -443,7 +456,7 @@ const AddSubscription = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3">
+            <div className="flex gap-3 pb-6">
               <Button
                 type="button"
                 variant="outline"
@@ -452,14 +465,14 @@ const AddSubscription = () => {
                   setLogoUrl("");
                   setMode("choose");
                 }}
-                className="flex-1 h-14"
+                className="flex-1 h-12 md:h-14"
                 disabled={addSubscription.isPending}
               >
                 Batal
               </Button>
               <Button
                 type="submit"
-                className="flex-1 h-14"
+                className="flex-1 h-12 md:h-14"
                 disabled={addSubscription.isPending}
               >
                 <Save className="mr-2 h-5 w-5" />
