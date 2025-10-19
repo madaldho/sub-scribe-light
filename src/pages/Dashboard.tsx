@@ -42,8 +42,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8">
-      <header className="mb-6">
+    <div className="min-h-screen p-4 md:p-6 lg:p-8 pt-6 md:pt-8">
+      <header className="mb-8">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">

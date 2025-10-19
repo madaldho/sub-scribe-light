@@ -39,15 +39,15 @@ export function ServiceSuggestions({ onSelect }: ServiceSuggestionsProps) {
             className="cursor-pointer border-border hover:border-primary transition-all group overflow-hidden"
             onClick={() => onSelect(service)}
           >
-            <div className="p-3 flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted">
+            <div className="p-3 sm:p-4 flex flex-col items-center gap-2">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                 <img 
                   src={service.logo} 
                   alt={service.name}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <p className="text-xs font-medium text-center text-foreground group-hover:text-primary transition-colors">
+              <p className="text-xs sm:text-sm font-medium text-center text-foreground group-hover:text-primary transition-colors line-clamp-2">
                 {service.name}
               </p>
             </div>
