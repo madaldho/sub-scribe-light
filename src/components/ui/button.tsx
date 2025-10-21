@@ -11,8 +11,8 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-neumo-md hover:shadow-neumo-lg",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-neumo-md hover:shadow-neumo-lg",
-        outline: "border-2 border-primary/30 bg-card text-foreground hover:bg-primary/10 hover:border-primary/50 shadow-neumo-sm hover:shadow-neumo-md",
-        secondary: "bg-background-elevated text-foreground hover:bg-background-elevated/80 border border-border shadow-neumo-md hover:shadow-neumo-lg",
+        outline: "border-2 border-primary/50 bg-primary/5 text-foreground hover:bg-primary/15 hover:border-primary/70 shadow-neumo-sm hover:shadow-neumo-md",
+        secondary: "bg-muted/50 text-foreground hover:bg-muted/70 border border-border shadow-neumo-md hover:shadow-neumo-lg",
         ghost: "text-foreground hover:bg-primary/10 hover:text-primary",
         link: "text-primary underline-offset-4 hover:underline",
       },
