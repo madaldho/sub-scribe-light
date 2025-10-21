@@ -38,7 +38,7 @@ export function BottomNav() {
                       flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200 shadow-neumo-lg border-2
                       ${active 
                         ? "bg-primary text-primary-foreground scale-110 border-primary" 
-                        : "bg-card border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-110"
+                        : "bg-primary/10 border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground hover:scale-110"
                       }
                     `}>
                       <item.icon className="h-6 w-6 stroke-[2.5]" />
