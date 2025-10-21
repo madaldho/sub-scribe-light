@@ -183,7 +183,9 @@ const Auth = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-14 neumo-card neumo-card-hover rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 text-base font-semibold"
+              variant="default"
+              size="lg"
+              className="w-full h-14 text-base font-semibold"
             >
               {loading ? (
                 <div className="flex items-center gap-2">
