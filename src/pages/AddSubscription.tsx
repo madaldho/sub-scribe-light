@@ -11,14 +11,15 @@ import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
 import { useAddSubscription } from "@/hooks/useSubscriptions";
 import { usePaymentMethods } from "@/hooks/usePaymentMethods";
+import { toast } from "sonner";
 import { ServiceSuggestions } from "@/components/subscriptions/ServiceSuggestions";
 import { LogoUploader } from "@/components/subscriptions/LogoUploader";
-import { addMonths, addYears, addWeeks, addDays } from "date-fns";
+import { calculateNextBillingDate, formatBillingCycle, type BillingCycle } from "@/lib/dateUtils";
 
 const AddSubscription = () => {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"choose" | "smart" | "manual">("choose");
-  const [period, setPeriod] = useState("monthly");
+  const [period, setPeriod] = useState<BillingCycle>("monthly");
   const [autoRenew, setAutoRenew] = useState(true);
   const [logoUrl, setLogoUrl] = useState("");
   const [isTrial, setIsTrial] = useState(false);
@@ -40,22 +41,7 @@ const AddSubscription = () => {
     }
   }, [serviceName]);
 
-  const calculateNextBillingDate = (startDate: string, billingCycle: string) => {
-    const start = new Date(startDate);
-    
-    switch (billingCycle) {
-      case 'daily':
-        return addDays(start, 1);
-      case 'weekly':
-        return addWeeks(start, 1);
-      case 'monthly':
-        return addMonths(start, 1);
-      case 'yearly':
-        return addYears(start, 1);
-      default:
-        return addMonths(start, 1);
-    }
-  };
+  
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,26 +56,55 @@ const AddSubscription = () => {
     const notes = formData.get("notes") as string;
     const paymentMethod = formData.get("paymentMethod") as string;
     
-    const nextBillingDate = calculateNextBillingDate(startDate, period);
+    console.log("Form data:", { name, period, startDate, isTrial });
+    const { nextBillingDate } = calculateNextBillingDate(startDate, period);
+    console.log("Calculated next billing date:", nextBillingDate, "for period:", period);
 
-    addSubscription.mutate({
+    // Validate required fields
+    if (!name.trim()) {
+      toast.error("Nama layanan harus diisi");
+      return;
+    }
+    
+    if (!price || price <= 0) {
+      toast.error("Harga harus lebih dari 0");
+      return;
+    }
+    
+    if (!startDate) {
+      toast.error("Tanggal mulai harus diisi");
+      return;
+    }
+
+    const subscriptionData = {
       name,
-      description,
-      price,
-      currency,
+      description: description || null,
+      price: Number(price),
+      currency: currency || "IDR",
       billing_cycle: period,
       start_date: startDate,
-      next_billing_date: nextBillingDate.toISOString().split('T')[0],
-      category,
-      notes,
-      status: 'active',
-      logo_url: logoUrl || undefined,
-      payment_method: paymentMethod || undefined,
+      next_billing_date: nextBillingDate,
+      category: category || "lainnya",
+      notes: notes || null,
+      status: isTrial ? 'trial' : 'active',
+      logo_url: logoUrl || null,
+      payment_method: paymentMethod || null,
       auto_renew: autoRenew,
-      last_payment_date: startDate,
-    }, {
+      last_payment_date: isTrial ? null : startDate,
+      is_trial: isTrial,
+      trial_end_date: isTrial ? trialEndDate : null,
+    };
+
+    console.log("Submitting subscription data:", subscriptionData);
+
+    addSubscription.mutate(subscriptionData, {
       onSuccess: () => {
+        toast.success("Langganan berhasil ditambahkan!");
         navigate("/subscriptions");
+      },
+      onError: (error: any) => {
+        console.error("Failed to add subscription:", error);
+        toast.error(error.message || "Gagal menambahkan langganan");
       }
     });
   };
@@ -156,7 +171,10 @@ const AddSubscription = () => {
                     ? "border-2 border-primary shadow-[0_0_20px_rgba(142,192,165,0.3)]"
                     : "border-2 border-transparent"
                 }`}
-                onClick={() => setPeriod(option.value)}
+                onClick={() => {
+                  console.log("Selected period:", option.value);
+                  setPeriod(option.value as BillingCycle);
+                }}
               >
                 <RadioGroupItem
                   value={option.value}

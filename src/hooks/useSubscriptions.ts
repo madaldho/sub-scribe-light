@@ -136,23 +136,29 @@ export const useDeleteSubscription = () => {
     mutationFn: async (id: string) => {
       if (!user) throw new Error("User not authenticated");
 
-      // First delete related payment history
-      const { error: paymentError } = await supabase
-        .from("payment_history")
-        .delete()
-        .eq("subscription_id", id)
-        .eq("user_id", user.id);
-
-      if (paymentError) throw paymentError;
-
-      // Then delete the subscription
+      // Delete the subscription first (cascade should handle related records)
       const { error } = await supabase
         .from("subscriptions")
         .delete()
         .eq("id", id)
         .eq("user_id", user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Delete subscription error:", error);
+        throw error;
+      }
+
+      // Optionally clean up payment history if cascade doesn't work
+      const { error: paymentError } = await supabase
+        .from("payment_history")
+        .delete()
+        .eq("subscription_id", id)
+        .eq("user_id", user.id);
+
+      // Don't throw error for payment history cleanup, just log it
+      if (paymentError) {
+        console.warn("Payment history cleanup warning:", paymentError);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscriptions"] });

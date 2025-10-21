@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 const Analytics = lazy(() => import("./pages/Analytics"));
 const Settings = lazy(() => import("./pages/Settings"));
 const SubscriptionDetail = lazy(() => import("./pages/SubscriptionDetail"));
+const EditSubscription = lazy(() => import("./pages/EditSubscription"));
 
 // Loading component for suspense fallback
 const PageLoader = () => (
@@ -65,6 +66,18 @@ const App = () => (
                   <MainLayout>
                     <Suspense fallback={<PageLoader />}>
                       <SubscriptionDetail />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/subscription/:id/edit" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<PageLoader />}>
+                      <EditSubscription />
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>

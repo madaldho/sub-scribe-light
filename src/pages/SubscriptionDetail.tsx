@@ -130,6 +130,14 @@ const SubscriptionDetail = () => {
             </div>
 
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => navigate(`/subscription/${subscription.id}/edit`)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+              
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button

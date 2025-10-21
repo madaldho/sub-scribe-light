@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
-import { addMonths, addYears, addWeeks, addDays } from "date-fns";
+import { recalculateNextBillingDate, type BillingCycle } from "@/lib/dateUtils";
 
 export interface PaymentHistory {
   id: string;
@@ -56,25 +56,10 @@ export const useMarkAsPaid = () => {
       if (!user) throw new Error("User not authenticated");
 
       // Calculate next billing date based on billing cycle
-      const currentDate = new Date(currentNextBillingDate);
-      let newNextBillingDate: Date;
-
-      switch (billingCycle) {
-        case 'daily':
-          newNextBillingDate = addDays(currentDate, 1);
-          break;
-        case 'weekly':
-          newNextBillingDate = addWeeks(currentDate, 1);
-          break;
-        case 'monthly':
-          newNextBillingDate = addMonths(currentDate, 1);
-          break;
-        case 'yearly':
-          newNextBillingDate = addYears(currentDate, 1);
-          break;
-        default:
-          newNextBillingDate = addMonths(currentDate, 1);
-      }
+      const { nextBillingDate: newNextBillingDate } = recalculateNextBillingDate(
+        currentNextBillingDate, 
+        billingCycle as BillingCycle
+      );
 
       // Create payment history record
       const { error: paymentError } = await supabase
@@ -90,17 +75,24 @@ export const useMarkAsPaid = () => {
       if (paymentError) throw paymentError;
 
       // Update subscription next_billing_date and set to active if was in trial
+      const updateData = {
+        next_billing_date: newNextBillingDate,
+        last_payment_date: new Date().toISOString().split('T')[0],
+        status: 'active',
+        is_trial: false
+      };
+
+      console.log("Updating subscription after payment:", updateData);
+
       const { error: updateError } = await supabase
         .from("subscriptions")
-        .update({ 
-          next_billing_date: newNextBillingDate.toISOString().split('T')[0],
-          last_payment_date: new Date().toISOString().split('T')[0],
-          status: 'active',
-          is_trial: false
-        })
+        .update(updateData)
         .eq("id", subscriptionId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error("Failed to update subscription:", updateError);
+        throw updateError;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["paymentHistory"] });

@@ -80,7 +80,7 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-            <DropdownMenuItem onClick={() => navigate(`/subscription/${subscription.id}`)}>
+            <DropdownMenuItem onClick={() => navigate(`/subscription/${subscription.id}/edit`)}>
               <Edit className="h-4 w-4 mr-2" />
               Edit
             </DropdownMenuItem>
