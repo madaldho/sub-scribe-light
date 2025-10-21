@@ -153,8 +153,8 @@ const AddSubscription = () => {
                 key={option.value}
                 className={`neumo-card p-4 rounded-xl cursor-pointer transition-all ${
                   period === option.value
-                    ? "ring-2 ring-primary"
-                    : ""
+                    ? "border-2 border-primary shadow-[0_0_20px_rgba(142,192,165,0.3)]"
+                    : "border-2 border-transparent"
                 }`}
                 onClick={() => setPeriod(option.value)}
               >

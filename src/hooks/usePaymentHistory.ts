@@ -89,11 +89,14 @@ export const useMarkAsPaid = () => {
 
       if (paymentError) throw paymentError;
 
-      // Update subscription next_billing_date
+      // Update subscription next_billing_date and set to active if was in trial
       const { error: updateError } = await supabase
         .from("subscriptions")
         .update({ 
-          next_billing_date: newNextBillingDate.toISOString().split('T')[0]
+          next_billing_date: newNextBillingDate.toISOString().split('T')[0],
+          last_payment_date: new Date().toISOString().split('T')[0],
+          status: 'active',
+          is_trial: false
         })
         .eq("id", subscriptionId);
 

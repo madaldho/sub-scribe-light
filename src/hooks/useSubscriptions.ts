@@ -130,21 +130,38 @@ export const useUpdateSubscription = () => {
 
 export const useDeleteSubscription = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (id: string) => {
+      if (!user) throw new Error("User not authenticated");
+
+      // First delete related payment history
+      const { error: paymentError } = await supabase
+        .from("payment_history")
+        .delete()
+        .eq("subscription_id", id)
+        .eq("user_id", user.id);
+
+      if (paymentError) throw paymentError;
+
+      // Then delete the subscription
       const { error } = await supabase
         .from("subscriptions")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_id", user.id);
 
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+      queryClient.invalidateQueries({ queryKey: ["paymentHistory"] });
       toast.success("Langganan berhasil dihapus!");
     },
     onError: (error: any) => {
+      console.error("Delete error:", error);
       toast.error(error.message || "Gagal menghapus langganan");
     },
   });
