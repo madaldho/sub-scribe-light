@@ -104,17 +104,24 @@ export const useAddSubscription = () => {
 
 export const useUpdateSubscription = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Subscription> & { id: string }) => {
+      if (!user) throw new Error("User not authenticated");
+      
       const { data, error } = await supabase
         .from("subscriptions")
         .update(updates)
         .eq("id", id)
+        .eq("user_id", user.id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Update subscription error:", error);
+        throw new Error("Gagal mengupdate langganan: " + error.message);
+      }
       return data;
     },
     onSuccess: () => {
@@ -136,29 +143,31 @@ export const useDeleteSubscription = () => {
     mutationFn: async (id: string) => {
       if (!user) throw new Error("User not authenticated");
 
-      // Delete the subscription first (cascade should handle related records)
-      const { error } = await supabase
-        .from("subscriptions")
-        .delete()
-        .eq("id", id)
-        .eq("user_id", user.id);
-
-      if (error) {
-        console.error("Delete subscription error:", error);
-        throw error;
-      }
-
-      // Optionally clean up payment history if cascade doesn't work
+      // First delete payment history records
       const { error: paymentError } = await supabase
         .from("payment_history")
         .delete()
         .eq("subscription_id", id)
         .eq("user_id", user.id);
 
-      // Don't throw error for payment history cleanup, just log it
       if (paymentError) {
-        console.warn("Payment history cleanup warning:", paymentError);
+        console.error("Delete payment history error:", paymentError);
+        throw new Error("Gagal menghapus riwayat pembayaran: " + paymentError.message);
       }
+
+      // Then delete the subscription
+      const { error: subscriptionError } = await supabase
+        .from("subscriptions")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+      if (subscriptionError) {
+        console.error("Delete subscription error:", subscriptionError);
+        throw new Error("Gagal menghapus langganan: " + subscriptionError.message);
+      }
+
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscriptions"] });

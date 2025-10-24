@@ -51,7 +51,7 @@ const EditSubscription = () => {
         notes: subscription.notes || "",
         paymentMethod: subscription.payment_method || ""
       });
-      setPeriod(subscription.billing_cycle);
+      setPeriod(subscription.billing_cycle as BillingCycle);
       setAutoRenew(subscription.auto_renew || false);
       setLogoUrl(subscription.logo_url || "");
       setIsTrial(subscription.is_trial || false);
@@ -235,7 +235,7 @@ const EditSubscription = () => {
             {/* Billing Period */}
             <div className="space-y-3">
               <Label className="text-foreground">Periode Pembayaran</Label>
-              <RadioGroup value={period} onValueChange={setPeriod}>
+              <RadioGroup value={period} onValueChange={(value) => setPeriod(value as BillingCycle)}>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { value: "daily", label: "Harian" },

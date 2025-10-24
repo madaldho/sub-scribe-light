@@ -156,7 +156,7 @@ const AddSubscription = () => {
       {/* Billing Period */}
       <div className="space-y-3">
         <Label className="text-foreground">Periode Pembayaran</Label>
-        <RadioGroup value={period} onValueChange={setPeriod}>
+        <RadioGroup value={period} onValueChange={(value) => setPeriod(value as BillingCycle)}>
           <div className="grid grid-cols-2 gap-3">
             {[
               { value: "daily", label: "Harian" },
