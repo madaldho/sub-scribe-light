@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useSubscription, useUpdateSubscription } from "@/hooks/useSubscriptions";
@@ -27,6 +26,7 @@ const EditSubscription = () => {
   const [logoUrl, setLogoUrl] = useState("");
   const [isTrial, setIsTrial] = useState(false);
   const [trialEndDate, setTrialEndDate] = useState("");
+  const [priceDisplay, setPriceDisplay] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -38,9 +38,23 @@ const EditSubscription = () => {
     paymentMethod: ""
   });
 
+  // Format number with thousand separator
+  const formatNumber = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    if (!numbers) return '';
+    return parseInt(numbers).toLocaleString('id-ID');
+  };
+
+  // Parse formatted number to float
+  const parseFormattedNumber = (value: string) => {
+    return parseFloat(value.replace(/\./g, '').replace(',', '.')) || 0;
+  };
+
   // Initialize form data when subscription loads
   useEffect(() => {
     if (subscription) {
+      const formattedPrice = formatNumber(subscription.price.toString());
+      setPriceDisplay(formattedPrice);
       setFormData({
         name: subscription.name,
         description: subscription.description || "",
@@ -66,13 +80,15 @@ const EditSubscription = () => {
     
     if (!subscription) return;
 
+    const price = parseFormattedNumber(priceDisplay);
+
     // Validate required fields
     if (!formData.name.trim()) {
       toast.error("Nama layanan harus diisi");
       return;
     }
     
-    if (!formData.price || parseFloat(formData.price) <= 0) {
+    if (!price || price <= 0) {
       toast.error("Harga harus lebih dari 0");
       return;
     }
@@ -88,7 +104,7 @@ const EditSubscription = () => {
       id: subscription.id,
       name: formData.name,
       description: formData.description || null,
-      price: parseFloat(formData.price),
+      price: price,
       currency: formData.currency || "IDR",
       billing_cycle: period,
       start_date: formData.startDate,
@@ -119,6 +135,11 @@ const EditSubscription = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatNumber(e.target.value);
+    setPriceDisplay(formatted);
   };
 
   if (isLoading) {
@@ -206,13 +227,19 @@ const EditSubscription = () => {
                 </Label>
                 <Input
                   id="price"
-                  type="number"
-                  value={formData.price}
-                  onChange={(e) => handleInputChange("price", e.target.value)}
+                  type="text"
+                  inputMode="numeric"
+                  value={priceDisplay}
+                  onChange={handlePriceChange}
                   placeholder="0"
                   className="neumo-input h-12 border-0 focus-visible:ring-primary"
                   required
                 />
+                {priceDisplay && (
+                  <p className="text-xs text-muted-foreground">
+                    Harga: {priceDisplay}
+                  </p>
+                )}
               </div>
               
               <div className="space-y-2">
@@ -235,41 +262,32 @@ const EditSubscription = () => {
             {/* Billing Period */}
             <div className="space-y-3">
               <Label className="text-foreground">Periode Pembayaran</Label>
-              <RadioGroup value={period} onValueChange={(value) => setPeriod(value as BillingCycle)}>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { value: "daily", label: "Harian" },
-                    { value: "weekly", label: "Mingguan" },
-                    { value: "monthly", label: "Bulanan" },
-                    { value: "yearly", label: "Tahunan" }
-                  ].map((option) => (
-                    <div
-                      key={option.value}
-                      className={`neumo-card p-4 rounded-xl cursor-pointer transition-all ${
-                        period === option.value
-                          ? "border-2 border-primary shadow-[0_0_20px_rgba(142,192,165,0.3)]"
-                          : "border-2 border-transparent"
-                      }`}
-                      onClick={() => {
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { value: "daily", label: "Harian" },
+                  { value: "weekly", label: "Mingguan" },
+                  { value: "monthly", label: "Bulanan" },
+                  { value: "yearly", label: "Tahunan" }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`neumo-card p-4 rounded-xl cursor-pointer transition-all text-center ${
+                      period === option.value
+                        ? "border-2 border-primary bg-primary/5 shadow-[0_0_20px_rgba(142,192,165,0.3)]"
+                        : "border-2 border-transparent hover:border-primary/30"
+                    }`}
+                    onClick={() => {
                       console.log("Selected period (edit):", option.value);
                       setPeriod(option.value as BillingCycle);
                     }}
-                    >
-                      <RadioGroupItem
-                        value={option.value}
-                        id={option.value}
-                        className="sr-only"
-                      />
-                      <Label
-                        htmlFor={option.value}
-                        className="text-foreground cursor-pointer font-medium"
-                      >
-                        {option.label}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </RadioGroup>
+                  >
+                    <span className="text-foreground font-medium">
+                      {option.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Start Date */}

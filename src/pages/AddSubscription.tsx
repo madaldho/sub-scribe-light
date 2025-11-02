@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
@@ -25,6 +24,7 @@ const AddSubscription = () => {
   const [isTrial, setIsTrial] = useState(false);
   const [trialEndDate, setTrialEndDate] = useState("");
   const [serviceName, setServiceName] = useState("");
+  const [priceDisplay, setPriceDisplay] = useState("");
   const addSubscription = useAddSubscription();
   const { data: paymentMethods = [] } = usePaymentMethods();
   const formFieldsRef = useRef<HTMLDivElement>(null);
@@ -43,13 +43,30 @@ const AddSubscription = () => {
 
   
 
+  // Format number with thousand separator
+  const formatNumber = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    if (!numbers) return '';
+    return parseInt(numbers).toLocaleString('id-ID');
+  };
+
+  // Parse formatted number to float
+  const parseFormattedNumber = (value: string) => {
+    return parseFloat(value.replace(/\./g, '').replace(',', '.')) || 0;
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatNumber(e.target.value);
+    setPriceDisplay(formatted);
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
     const name = formData.get("name") as string;
     const description = formData.get("package") as string;
-    const price = parseFloat(formData.get("price") as string);
+    const price = parseFormattedNumber(priceDisplay);
     const currency = (formData.get("currency") as string) || "IDR";
     const startDate = formData.get("startDate") as string;
     const category = (formData.get("category") as string) || "lainnya";
@@ -133,11 +150,19 @@ const AddSubscription = () => {
           <Input
             id="price"
             name="price"
-            type="number"
+            type="text"
+            inputMode="numeric"
             placeholder="0"
+            value={priceDisplay}
+            onChange={handlePriceChange}
             className="neumo-input h-12 border-0 focus-visible:ring-primary"
             required
           />
+          {priceDisplay && (
+            <p className="text-xs text-muted-foreground">
+              Harga: {priceDisplay}
+            </p>
+          )}
         </div>
         
         <div className="space-y-2">
@@ -156,41 +181,32 @@ const AddSubscription = () => {
       {/* Billing Period */}
       <div className="space-y-3">
         <Label className="text-foreground">Periode Pembayaran</Label>
-        <RadioGroup value={period} onValueChange={(value) => setPeriod(value as BillingCycle)}>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { value: "daily", label: "Harian" },
-              { value: "weekly", label: "Mingguan" },
-              { value: "monthly", label: "Bulanan" },
-              { value: "yearly", label: "Tahunan" }
-            ].map((option) => (
-              <div
-                key={option.value}
-                className={`neumo-card p-4 rounded-xl cursor-pointer transition-all ${
-                  period === option.value
-                    ? "border-2 border-primary shadow-[0_0_20px_rgba(142,192,165,0.3)]"
-                    : "border-2 border-transparent"
-                }`}
-                onClick={() => {
-                  console.log("Selected period:", option.value);
-                  setPeriod(option.value as BillingCycle);
-                }}
-              >
-                <RadioGroupItem
-                  value={option.value}
-                  id={option.value}
-                  className="sr-only"
-                />
-                <Label
-                  htmlFor={option.value}
-                  className="text-foreground cursor-pointer font-medium"
-                >
-                  {option.label}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </RadioGroup>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { value: "daily", label: "Harian" },
+            { value: "weekly", label: "Mingguan" },
+            { value: "monthly", label: "Bulanan" },
+            { value: "yearly", label: "Tahunan" }
+          ].map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={`neumo-card p-4 rounded-xl cursor-pointer transition-all text-center ${
+                period === option.value
+                  ? "border-2 border-primary bg-primary/5 shadow-[0_0_20px_rgba(142,192,165,0.3)]"
+                  : "border-2 border-transparent hover:border-primary/30"
+              }`}
+              onClick={() => {
+                console.log("Selected period:", option.value);
+                setPeriod(option.value as BillingCycle);
+              }}
+            >
+              <span className="text-foreground font-medium">
+                {option.label}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Start Date */}
