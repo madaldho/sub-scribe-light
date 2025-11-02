@@ -87,7 +87,8 @@ export const useMarkAsPaid = () => {
       const { error: updateError } = await supabase
         .from("subscriptions")
         .update(updateData)
-        .eq("id", subscriptionId);
+        .eq("id", subscriptionId)
+        .eq("user_id", user.id);
 
       if (updateError) {
         console.error("Failed to update subscription:", updateError);

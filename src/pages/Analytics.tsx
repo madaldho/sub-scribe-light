@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
-import { usePaymentHistory } from "@/hooks/usePaymentHistory";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { TrendingUp, DollarSign, Calendar, CreditCard } from "lucide-react";
 

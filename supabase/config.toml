@@ -1,1 +1,7 @@
 project_id = "cisgtbibblwmcbewkefp"
+
+[functions.check-upcoming-subscriptions]
+verify_jwt = false
+
+[functions.update-currency-rates]
+verify_jwt = false

@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Download, Upload, AlertCircle } from "lucide-react";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
 import { usePaymentMethods } from "@/hooks/usePaymentMethods";
-import { usePaymentHistory } from "@/hooks/usePaymentHistory";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
