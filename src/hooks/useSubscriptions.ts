@@ -143,43 +143,7 @@ export const useDeleteSubscription = () => {
     mutationFn: async (id: string) => {
       if (!user) throw new Error("User not authenticated");
 
-      // First delete audit logs
-      const { error: auditError } = await supabase
-        .from("subscription_audit_log")
-        .delete()
-        .eq("subscription_id", id)
-        .eq("user_id", user.id);
-
-      if (auditError) {
-        console.error("Delete audit log error:", auditError);
-        // Don't throw error here, continue with deletion
-      }
-
-      // Delete notifications
-      const { error: notificationError } = await supabase
-        .from("notifications")
-        .delete()
-        .eq("subscription_id", id)
-        .eq("user_id", user.id);
-
-      if (notificationError) {
-        console.error("Delete notification error:", notificationError);
-        // Don't throw error here, continue with deletion
-      }
-
-      // Delete payment history records
-      const { error: paymentError } = await supabase
-        .from("payment_history")
-        .delete()
-        .eq("subscription_id", id)
-        .eq("user_id", user.id);
-
-      if (paymentError) {
-        console.error("Delete payment history error:", paymentError);
-        throw new Error("Gagal menghapus riwayat pembayaran: " + paymentError.message);
-      }
-
-      // Finally delete the subscription
+      // Delete the subscription - CASCADE will handle related records
       const { error: subscriptionError } = await supabase
         .from("subscriptions")
         .delete()
@@ -202,6 +166,39 @@ export const useDeleteSubscription = () => {
     onError: (error: any) => {
       console.error("Delete error:", error);
       toast.error(error.message || "Gagal menghapus langganan");
+    },
+  });
+};
+
+export const useUpdateSubscriptionStatus = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      if (!user) throw new Error("User not authenticated");
+      
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .update({ status })
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Update subscription status error:", error);
+        throw new Error("Gagal mengupdate status: " + error.message);
+      }
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+      toast.success("Status langganan berhasil diupdate!");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Gagal mengupdate status");
     },
   });
 };

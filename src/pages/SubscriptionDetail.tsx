@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Edit, Trash2, CheckCircle, Calendar, CreditCard } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, CheckCircle, Calendar, CreditCard, Pause, Play, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useSubscription, useDeleteSubscription } from "@/hooks/useSubscriptions";
+import { useSubscription, useDeleteSubscription, useUpdateSubscriptionStatus } from "@/hooks/useSubscriptions";
 import { usePaymentHistory, useMarkAsPaid } from "@/hooks/usePaymentHistory";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,6 +28,7 @@ const SubscriptionDetail = () => {
   const { data: auditLogs } = useAuditLog(id!);
   const deleteSubscription = useDeleteSubscription();
   const markAsPaid = useMarkAsPaid();
+  const updateStatus = useUpdateSubscriptionStatus();
 
   const handleMarkPaid = () => {
     if (!subscription) return;
@@ -59,12 +60,25 @@ const SubscriptionDetail = () => {
   };
 
   const formatStatus = (status: string) => {
-    const statuses: Record<string, "Aktif" | "Berhenti" | "Uji Coba"> = {
+    const statuses: Record<string, string> = {
       active: "Aktif",
       inactive: "Berhenti",
+      paused: "Dijeda",
+      cancelled: "Dibatalkan",
       trial: "Uji Coba"
     };
     return statuses[status] || "Aktif";
+  };
+
+  const handlePauseResume = () => {
+    if (!subscription) return;
+    const newStatus = subscription.status === 'paused' ? 'active' : 'paused';
+    updateStatus.mutate({ id: subscription.id, status: newStatus });
+  };
+
+  const handleCancel = () => {
+    if (!subscription) return;
+    updateStatus.mutate({ id: subscription.id, status: 'cancelled' });
   };
 
   const formatCurrency = (amount: number, currency: string) => {
@@ -100,10 +114,12 @@ const SubscriptionDetail = () => {
     );
   }
 
-  const statusColors = {
+  const statusColors: Record<string, string> = {
     "Aktif": "text-success bg-success/10 border-success/30",
     "Berhenti": "text-destructive bg-destructive/10 border-destructive/30",
-    "Uji Coba": "text-warning bg-warning/10 border-warning/30"
+    "Dijeda": "text-warning bg-warning/10 border-warning/30",
+    "Dibatalkan": "text-destructive bg-destructive/10 border-destructive/30",
+    "Uji Coba": "text-primary bg-primary/10 border-primary/30"
   };
 
   return (
@@ -228,48 +244,131 @@ const SubscriptionDetail = () => {
             </div>
           )}
 
-          {/* Mark as Paid Button */}
-          <Button
-            onClick={handleMarkPaid}
-            disabled={markAsPaid.isPending}
-            className="w-full h-14 bg-success text-success-foreground hover:bg-success/90"
-          >
-            <CheckCircle className="mr-2 h-5 w-5" />
-            {markAsPaid.isPending ? "Memproses..." : "Tandai Sudah Bayar"}
-          </Button>
+          {/* Action Buttons */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <Button
+              onClick={handleMarkPaid}
+              disabled={markAsPaid.isPending || subscription.status === 'cancelled'}
+              className="h-12 bg-success text-success-foreground hover:bg-success/90"
+            >
+              <CheckCircle className="mr-2 h-4 w-4" />
+              {markAsPaid.isPending ? "Proses..." : "Tandai Bayar"}
+            </Button>
+
+            <Button
+              onClick={handlePauseResume}
+              disabled={updateStatus.isPending || subscription.status === 'cancelled'}
+              variant="outline"
+              className="h-12"
+            >
+              {subscription.status === 'paused' ? (
+                <>
+                  <Play className="mr-2 h-4 w-4" />
+                  Lanjutkan
+                </>
+              ) : (
+                <>
+                  <Pause className="mr-2 h-4 w-4" />
+                  Jeda
+                </>
+              )}
+            </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-12 text-destructive hover:text-destructive"
+                  disabled={subscription.status === 'cancelled'}
+                >
+                  <XCircle className="mr-2 h-4 w-4" />
+                  Batalkan
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="neumo-card border-0">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Batalkan Langganan?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Ini akan mengubah status menjadi dibatalkan. Anda masih bisa mengaktifkannya kembali nanti.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={handleCancel}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Ya, Batalkan
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
 
         {/* Payment History */}
         <div className="neumo-card p-6 md:p-8 mb-6">
-          <h2 className="text-xl font-bold text-foreground mb-6">Riwayat Pembayaran</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-foreground">Riwayat Pembayaran</h2>
+            {paymentHistory && paymentHistory.length > 0 && (
+              <Badge variant="outline" className="text-sm">
+                {paymentHistory.length} pembayaran
+              </Badge>
+            )}
+          </div>
           
           {paymentHistory && paymentHistory.length > 0 ? (
             <div className="space-y-3">
-              {paymentHistory.map((payment) => (
+              {paymentHistory.map((payment, index) => (
                 <div
                   key={payment.id}
-                  className="neumo-card neumo-card-hover p-4 rounded-xl flex items-center justify-between"
+                  className="neumo-card neumo-card-hover p-4 rounded-xl"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="neumo-card p-2 rounded-lg bg-success/10">
-                      <CheckCircle className="h-4 w-4 text-success" />
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="neumo-card p-2 rounded-lg bg-success/10">
+                        <CheckCircle className="h-4 w-4 text-success" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">
+                          Pembayaran #{paymentHistory.length - index}
+                        </p>
+                        <p className="text-sm text-foreground-muted">
+                          {format(new Date(payment.payment_date), "EEEE, d MMMM yyyy", { locale: localeId })}
+                        </p>
+                        {payment.created_at && (
+                          <p className="text-xs text-foreground-muted mt-1">
+                            Dicatat: {format(new Date(payment.created_at), "HH:mm", { locale: localeId })}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-foreground">
-                        {format(new Date(payment.payment_date), "d MMMM yyyy", { locale: localeId })}
+                    <div className="text-right">
+                      <p className="font-bold text-foreground text-lg">
+                        {formatCurrency(payment.amount, subscription.currency)}
                       </p>
-                      <p className="text-sm text-foreground-muted">{payment.status === 'paid' ? 'Lunas' : payment.status}</p>
+                      <Badge variant="outline" className="text-xs bg-success/10 text-success border-success/30 mt-1">
+                        Lunas
+                      </Badge>
                     </div>
                   </div>
-                  <p className="font-bold text-foreground">
-                    {formatCurrency(payment.amount, subscription.currency)}
-                  </p>
+                  {payment.notes && (
+                    <div className="ml-11 text-sm text-foreground-muted bg-background-elevated p-2 rounded mt-2">
+                      {payment.notes}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8">
-              <p className="text-foreground-muted">Belum ada riwayat pembayaran</p>
+            <div className="text-center py-12">
+              <div className="neumo-card p-4 rounded-full w-16 h-16 mx-auto mb-4 bg-background-elevated flex items-center justify-center">
+                <Calendar className="h-8 w-8 text-foreground-muted" />
+              </div>
+              <p className="text-foreground-muted mb-2">Belum ada riwayat pembayaran</p>
+              <p className="text-sm text-foreground-muted">
+                Klik "Tandai Bayar" untuk mencatat pembayaran pertama
+              </p>
             </div>
           )}
         </div>

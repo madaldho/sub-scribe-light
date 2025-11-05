@@ -36,13 +36,15 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
   const statusColors = {
     "active": "text-success bg-success/10 border-success/30",
     "cancelled": "text-destructive bg-destructive/10 border-destructive/30",
+    "inactive": "text-destructive bg-destructive/10 border-destructive/30",
     "trial": "text-warning bg-warning/10 border-warning/30",
     "paused": "text-muted bg-muted/10 border-muted/30"
   };
 
-  const statusLabels = {
+  const statusLabels: Record<string, string> = {
     "active": "Aktif",
-    "cancelled": "Berhenti",
+    "cancelled": "Dibatalkan",
+    "inactive": "Berhenti",
     "trial": "Uji Coba",
     "paused": "Dijeda"
   };
