@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Loader2 } from "lucide-react";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 import Dashboard from "./pages/Dashboard";
 import Subscriptions from "./pages/Subscriptions";
 import AddSubscription from "./pages/AddSubscription";
@@ -47,6 +48,70 @@ const queryClient = new QueryClient({
   },
 });
 
+const AppContent = () => {
+  // Auto scroll to top when navigating between pages
+  useScrollToTop();
+
+  return (
+    <Routes>
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
+      <Route path="/subscriptions" element={<ProtectedRoute><MainLayout><Subscriptions /></MainLayout></ProtectedRoute>} />
+      <Route path="/add" element={<ProtectedRoute><MainLayout><AddSubscription /></MainLayout></ProtectedRoute>} />
+      <Route 
+        path="/subscription/:id" 
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Suspense fallback={<PageLoader />}>
+                <SubscriptionDetail />
+              </Suspense>
+            </MainLayout>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/subscription/:id/edit" 
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Suspense fallback={<PageLoader />}>
+                <EditSubscription />
+              </Suspense>
+            </MainLayout>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/analytics" 
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Suspense fallback={<PageLoader />}>
+                <Analytics />
+              </Suspense>
+            </MainLayout>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Suspense fallback={<PageLoader />}>
+                <Settings />
+              </Suspense>
+            </MainLayout>
+          </ProtectedRoute>
+        } 
+      />
+      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -54,62 +119,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
-            <Route path="/subscriptions" element={<ProtectedRoute><MainLayout><Subscriptions /></MainLayout></ProtectedRoute>} />
-            <Route path="/add" element={<ProtectedRoute><MainLayout><AddSubscription /></MainLayout></ProtectedRoute>} />
-            <Route 
-              path="/subscription/:id" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<PageLoader />}>
-                      <SubscriptionDetail />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/subscription/:id/edit" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<PageLoader />}>
-                      <EditSubscription />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/analytics" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<PageLoader />}>
-                      <Analytics />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/settings" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<PageLoader />}>
-                      <Settings />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppContent />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
