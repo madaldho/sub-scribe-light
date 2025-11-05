@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
-import { X } from "lucide-react";
+import { Filter, X } from "lucide-react";
 
 export interface SubscriptionFilters {
   statuses: string[];
