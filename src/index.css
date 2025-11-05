@@ -8,7 +8,66 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Neumorphism Dark Theme */
+    /* Light Theme (default) */
+    --background: 0 0% 100%;
+    --background-surface: 0 0% 98%;
+    --background-elevated: 0 0% 96%;
+    
+    --foreground: 0 0% 3%;
+    --foreground-muted: 0 0% 45%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3%;
+
+    --primary: 142 52% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 0 0% 3%;
+
+    --muted: 240 5% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 45 93% 62%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 52% 65%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 45 93% 62%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 240 5% 88%;
+    --input: 240 5% 96%;
+    --ring: 142 52% 65%;
+
+    --radius: 1rem;
+
+    /* Light Neumorphic Shadows */
+    --shadow-sm: 4px 4px 12px rgba(0, 0, 0, 0.1), -4px -4px 12px rgba(255, 255, 255, 0.9);
+    --shadow-md: 8px 8px 20px rgba(0, 0, 0, 0.12), -8px -8px 20px rgba(255, 255, 255, 0.95);
+    --shadow-lg: 12px 12px 30px rgba(0, 0, 0, 0.15), -12px -12px 30px rgba(255, 255, 255, 0.96);
+    --shadow-inset: inset 4px 4px 12px rgba(0, 0, 0, 0.1), inset -4px -4px 12px rgba(255, 255, 255, 0.9);
+    --shadow-pressed: inset 6px 6px 16px rgba(0, 0, 0, 0.12), inset -6px -6px 16px rgba(255, 255, 255, 0.95);
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(142 52% 65%) 0%, hsl(142 52% 55%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(0 0% 98%) 0%, hsl(0 0% 100%) 100%);
+    --gradient-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .dark {
+    /* Neumorphism Dark Theme - Override for dark mode */
     --background: 240 6% 4%;
     --background-surface: 240 5% 7%;
     --background-elevated: 240 5% 9%;
@@ -47,23 +106,16 @@ All colors MUST be HSL.
     --input: 240 5% 12%;
     --ring: 142 52% 65%;
 
-    --radius: 1rem;
-
-    /* Neumorphic Shadows */
+    /* Dark Neumorphic Shadows */
     --shadow-sm: 4px 4px 12px rgba(0, 0, 0, 0.6), -4px -4px 12px rgba(255, 255, 255, 0.02);
     --shadow-md: 8px 8px 20px rgba(0, 0, 0, 0.7), -8px -8px 20px rgba(255, 255, 255, 0.03);
     --shadow-lg: 12px 12px 30px rgba(0, 0, 0, 0.8), -12px -12px 30px rgba(255, 255, 255, 0.04);
     --shadow-inset: inset 4px 4px 12px rgba(0, 0, 0, 0.6), inset -4px -4px 12px rgba(255, 255, 255, 0.02);
     --shadow-pressed: inset 6px 6px 16px rgba(0, 0, 0, 0.7), inset -6px -6px 16px rgba(255, 255, 255, 0.03);
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(142 52% 65%) 0%, hsl(142 52% 55%) 100%);
+    /* Dark Gradients */
     --gradient-surface: linear-gradient(135deg, hsl(240 5% 8%) 0%, hsl(240 5% 6%) 100%);
     --gradient-overlay: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 100%);
-
-    /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 }
 

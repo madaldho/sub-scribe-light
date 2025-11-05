@@ -4,12 +4,7 @@ import "./index.css";
 
 // Initialize theme before React hydration to prevent flash
 const savedTheme = localStorage.getItem('theme') || 'dark';
-if (savedTheme === 'dark') {
-  document.documentElement.classList.add('dark');
-  document.documentElement.classList.remove('light');
-} else {
-  document.documentElement.classList.add('light');
-  document.documentElement.classList.remove('dark');
-}
+document.documentElement.classList.remove('dark', 'light');
+document.documentElement.classList.add(savedTheme as string);
 
 createRoot(document.getElementById("root")!).render(<App />);
