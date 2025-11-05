@@ -143,7 +143,31 @@ export const useDeleteSubscription = () => {
     mutationFn: async (id: string) => {
       if (!user) throw new Error("User not authenticated");
 
-      // First delete payment history records
+      // First delete audit logs
+      const { error: auditError } = await supabase
+        .from("subscription_audit_log")
+        .delete()
+        .eq("subscription_id", id)
+        .eq("user_id", user.id);
+
+      if (auditError) {
+        console.error("Delete audit log error:", auditError);
+        // Don't throw error here, continue with deletion
+      }
+
+      // Delete notifications
+      const { error: notificationError } = await supabase
+        .from("notifications")
+        .delete()
+        .eq("subscription_id", id)
+        .eq("user_id", user.id);
+
+      if (notificationError) {
+        console.error("Delete notification error:", notificationError);
+        // Don't throw error here, continue with deletion
+      }
+
+      // Delete payment history records
       const { error: paymentError } = await supabase
         .from("payment_history")
         .delete()
@@ -155,7 +179,7 @@ export const useDeleteSubscription = () => {
         throw new Error("Gagal menghapus riwayat pembayaran: " + paymentError.message);
       }
 
-      // Then delete the subscription
+      // Finally delete the subscription
       const { error: subscriptionError } = await supabase
         .from("subscriptions")
         .delete()
