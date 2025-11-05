@@ -4,6 +4,7 @@ import { Search, Filter, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SubscriptionCard } from "@/components/subscriptions/SubscriptionCard";
+import { SubscriptionFilter } from "@/components/subscriptions/SubscriptionFilter";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
@@ -13,10 +14,46 @@ const Subscriptions = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const { data: subscriptions, isLoading } = useSubscriptions();
+  
+  // Filter state
+  const [filters, setFilters] = useState({
+    statuses: [],
+    categories: [],
+    billingCycles: [],
+    priceRange: { min: 0, max: 0 }
+  });
 
-  const filteredSubs = subscriptions?.filter(sub =>
-    sub.name.toLowerCase().includes(search.toLowerCase())
-  ) || [];
+  // Apply search and filters
+  const filteredSubs = subscriptions?.filter(sub => {
+    // Search filter
+    const matchesSearch = sub.name.toLowerCase().includes(search.toLowerCase());
+    
+    // Status filter
+    const matchesStatus = filters.statuses.length === 0 || filters.statuses.includes(sub.status);
+    
+    // Category filter
+    const matchesCategory = filters.categories.length === 0 || filters.categories.includes(sub.category);
+    
+    // Billing cycle filter
+    const matchesBillingCycle = filters.billingCycles.length === 0 || filters.billingCycles.includes(sub.billing_cycle);
+    
+    // Price range filter
+    const price = Number(sub.price);
+    const matchesPriceRange = 
+      (filters.priceRange.min === 0 || price >= filters.priceRange.min) &&
+      (filters.priceRange.max === 0 || price <= filters.priceRange.max);
+    
+    return matchesSearch && matchesStatus && matchesCategory && matchesBillingCycle && matchesPriceRange;
+  }) || [];
+
+  const clearFilters = () => {
+    setFilters({
+      statuses: [],
+      categories: [],
+      billingCycles: [],
+      priceRange: { min: 0, max: 0 }
+    });
+  };
 
   const formatBillingCycle = (cycle: string) => {
     const cycles: Record<string, string> = {
@@ -55,6 +92,11 @@ const Subscriptions = () => {
             </h1>
             <p className="text-muted-foreground">
               {filteredSubs.length} langganan ditemukan
+              {(search || filters.statuses.length > 0 || filters.categories.length > 0 || filters.billingCycles.length > 0 || filters.priceRange.min > 0 || filters.priceRange.max > 0) && (
+                <span className="ml-2 text-xs text-primary bg-primary/10 px-2 py-1 rounded">
+                  Ada filter
+                </span>
+              )}
             </p>
           </div>
           
@@ -79,12 +121,11 @@ const Subscriptions = () => {
             />
           </div>
           
-          <Button
-            variant="secondary"
-            size="lg"
-          >
-            <Filter className="h-5 w-5" />
-          </Button>
+          <SubscriptionFilter
+            filters={filters}
+            onFiltersChange={setFilters}
+            onClearFilters={clearFilters}
+          />
         </div>
       </header>
 
