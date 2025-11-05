@@ -324,12 +324,12 @@ const EditSubscription = () => {
               <Label htmlFor="paymentMethod" className="text-foreground">
                 Metode Pembayaran (Opsional)
               </Label>
-              <Select value={formData.paymentMethod} onValueChange={(value) => handleInputChange("paymentMethod", value)}>
+              <Select value={formData.paymentMethod || undefined} onValueChange={(value) => handleInputChange("paymentMethod", value === "none" ? "" : value)}>
                 <SelectTrigger className="neumo-input h-12 border-0">
                   <SelectValue placeholder="Pilih metode pembayaran" />
                 </SelectTrigger>
                 <SelectContent className="bg-card border-border z-50">
-                  <SelectItem value="">Tidak ada</SelectItem>
+                  <SelectItem value="none">Tidak ada</SelectItem>
                   {paymentMethods.length === 0 ? (
                     <div className="p-2 text-sm text-muted-foreground text-center">
                       Belum ada metode pembayaran
