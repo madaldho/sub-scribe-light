@@ -28,6 +28,7 @@ import { useUserPreferences, useUpdateUserPreferences } from "@/hooks/useUserPre
 import { useAuth } from "@/hooks/useAuth";
 import { LogOut, Trash2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { ThemeToggle } from "@/components/settings/ThemeToggle";
 
 export default function Settings() {
   const { user, signOut } = useAuth();
@@ -135,6 +136,16 @@ export default function Settings() {
                   <SelectItem value="EUR">EUR (Euro)</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Tema Aplikasi</Label>
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">Mode Gelap/Terang</p>
+                  <p className="text-sm text-muted-foreground">Ubah tampilan aplikasi</p>
+                </div>
+                <ThemeToggle />
+              </div>
             </div>
           </CardContent>
         </Card>

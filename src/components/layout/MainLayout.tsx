@@ -8,6 +8,7 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ThemeToggle } from "@/components/settings/ThemeToggle";
 import { OnboardingTutorial } from "@/components/onboarding/OnboardingTutorial";
 import { KeyboardShortcuts } from "@/components/shortcuts/KeyboardShortcuts";
+import { BackToTop } from "@/components/ui/BackToTop";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -48,7 +49,10 @@ export function MainLayout({ children }: MainLayoutProps) {
               
               <div className="flex items-center gap-2">
                 <NotificationBell />
-                <ThemeToggle />
+                {/* Only show theme toggle on desktop */}
+                <div className="hidden md:block">
+                  <ThemeToggle />
+                </div>
               </div>
             </header>
 
@@ -60,6 +64,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       </SidebarProvider>
       <OnboardingTutorial />
       <KeyboardShortcuts />
+      <BackToTop />
     </>
   );
 }
