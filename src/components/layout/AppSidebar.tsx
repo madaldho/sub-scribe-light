@@ -13,6 +13,8 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
+import logoDark from "@/assets/logo-dark.png";
+import logoLight from "@/assets/logo-light.png";
 
 const navItems = [
   { title: "Dashboard", url: "/", icon: Home },
@@ -37,8 +39,35 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent className="bg-card">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-primary font-bold text-lg px-4 py-6">
-            {open && "SubsTracker"}
+          <SidebarGroupLabel className="px-4 py-6">
+            {open ? (
+              <div className="flex items-center gap-3">
+                <img 
+                  src={logoLight} 
+                  alt="LanggananKu" 
+                  className="h-10 w-10 object-contain dark:hidden"
+                />
+                <img 
+                  src={logoDark} 
+                  alt="LanggananKu" 
+                  className="h-10 w-10 object-contain hidden dark:block"
+                />
+                <span className="text-primary font-bold text-lg">LanggananKu</span>
+              </div>
+            ) : (
+              <>
+                <img 
+                  src={logoLight} 
+                  alt="LanggananKu" 
+                  className="h-8 w-8 object-contain dark:hidden mx-auto"
+                />
+                <img 
+                  src={logoDark} 
+                  alt="LanggananKu" 
+                  className="h-8 w-8 object-contain hidden dark:block mx-auto"
+                />
+              </>
+            )}
           </SidebarGroupLabel>
           
           <SidebarGroupContent>

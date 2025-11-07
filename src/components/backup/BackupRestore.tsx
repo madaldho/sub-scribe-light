@@ -28,7 +28,7 @@ export function BackupRestore() {
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `substracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `langgananku-backup-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
     URL.revokeObjectURL(url);
     toast.success("Backup berhasil didownload!");

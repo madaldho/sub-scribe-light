@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 
 const steps = [
   {
-    title: "Selamat Datang di SubsTracker! 🎉",
+    title: "Selamat Datang di LanggananKu! 🎉",
     description: "Kelola semua langganan Anda dengan mudah. Mari kita mulai dengan tour singkat!",
     image: "📱",
   },

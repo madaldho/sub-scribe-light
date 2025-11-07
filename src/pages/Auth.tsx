@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, User, LogIn, UserPlus } from "lucide-react";
+import logoDark from "@/assets/logo-dark.png";
+import logoLight from "@/assets/logo-light.png";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -93,14 +95,23 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header - Spotify-like */}
+      {/* Header */}
       <div className="p-6">
         <div className="flex items-center gap-3">
           <div className="neumo-card p-3 rounded-2xl">
-            <div className="text-2xl">💳</div>
+            <img 
+              src={logoLight} 
+              alt="LanggananKu" 
+              className="h-10 w-10 object-contain dark:hidden"
+            />
+            <img 
+              src={logoDark} 
+              alt="LanggananKu" 
+              className="h-10 w-10 object-contain hidden dark:block"
+            />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-foreground">SubScribe</h1>
+            <h1 className="text-xl font-bold text-foreground">LanggananKu</h1>
             <p className="text-sm text-foreground-muted">Kelola Langganan</p>
           </div>
         </div>
