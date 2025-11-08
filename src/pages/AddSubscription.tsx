@@ -13,6 +13,7 @@ import { usePaymentMethods } from "@/hooks/usePaymentMethods";
 import { toast } from "sonner";
 import { ServiceSuggestions } from "@/components/subscriptions/ServiceSuggestions";
 import { LogoUploader } from "@/components/subscriptions/LogoUploader";
+import { CategoryAutocomplete } from "@/components/subscriptions/CategoryAutocomplete";
 import { calculateNextBillingDate, formatBillingCycle, type BillingCycle } from "@/lib/dateUtils";
 
 const AddSubscription = () => {
@@ -229,7 +230,7 @@ const AddSubscription = () => {
         <Label htmlFor="category" className="text-foreground">
           Kategori
         </Label>
-        <Input
+        <CategoryAutocomplete
           id="category"
           name="category"
           placeholder="contoh: Entertainment, Development"

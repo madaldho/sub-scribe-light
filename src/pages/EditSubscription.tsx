@@ -11,6 +11,7 @@ import { useSubscription, useUpdateSubscription } from "@/hooks/useSubscriptions
 import { usePaymentMethods } from "@/hooks/usePaymentMethods";
 import { toast } from "sonner";
 import { LogoUploader } from "@/components/subscriptions/LogoUploader";
+import { CategoryAutocomplete } from "@/components/subscriptions/CategoryAutocomplete";
 import { calculateNextBillingDate, formatBillingCycle, type BillingCycle } from "@/lib/dateUtils";
 
 const EditSubscription = () => {
@@ -330,11 +331,12 @@ const EditSubscription = () => {
               <Label htmlFor="category" className="text-foreground">
                 Kategori
               </Label>
-              <Input
+              <CategoryAutocomplete
                 id="category"
-                value={formData.category}
-                onChange={(e) => handleInputChange("category", e.target.value)}
+                name="category"
                 placeholder="contoh: Entertainment, Development"
+                value={formData.category}
+                onChange={(value) => handleInputChange("category", value)}
                 className="neumo-input h-12 border-0 focus-visible:ring-primary"
               />
             </div>
