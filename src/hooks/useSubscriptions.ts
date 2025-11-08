@@ -24,6 +24,7 @@ export interface Subscription {
   last_payment_date?: string;
   is_trial?: boolean;
   trial_end_date?: string;
+  trial_fee?: number;
   user_id: string;
   created_at: string;
   updated_at: string;

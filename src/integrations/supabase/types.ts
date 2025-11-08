@@ -373,6 +373,7 @@ export type Database = {
           start_date: string
           status: string
           trial_end_date: string | null
+          trial_fee: number | null
           updated_at: string
           user_id: string
         }
@@ -398,6 +399,7 @@ export type Database = {
           start_date?: string
           status?: string
           trial_end_date?: string | null
+          trial_fee?: number | null
           updated_at?: string
           user_id: string
         }
@@ -423,6 +425,7 @@ export type Database = {
           start_date?: string
           status?: string
           trial_end_date?: string | null
+          trial_fee?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -614,7 +617,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_old_notifications: { Args: never; Returns: undefined }
+      create_payment_notifications: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

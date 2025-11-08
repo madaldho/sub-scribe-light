@@ -24,6 +24,7 @@ const AddSubscription = () => {
   const [logoUrl, setLogoUrl] = useState("");
   const [isTrial, setIsTrial] = useState(false);
   const [trialEndDate, setTrialEndDate] = useState("");
+  const [trialFee, setTrialFee] = useState("");
   const [serviceName, setServiceName] = useState("");
   const [priceDisplay, setPriceDisplay] = useState("");
   const addSubscription = useAddSubscription();
@@ -111,6 +112,7 @@ const AddSubscription = () => {
       last_payment_date: isTrial ? null : startDate,
       is_trial: isTrial,
       trial_end_date: isTrial ? trialEndDate : null,
+      trial_fee: isTrial && trialFee ? parseFormattedNumber(trialFee) : 0,
     };
 
     console.log("Submitting subscription data:", subscriptionData);
@@ -291,19 +293,39 @@ const AddSubscription = () => {
       </div>
 
       {isTrial && (
-        <div className="space-y-2">
-          <Label htmlFor="trialEndDate" className="text-foreground">
-            Tanggal Berakhir Trial
-          </Label>
-          <Input
-            id="trialEndDate"
-            type="date"
-            value={trialEndDate}
-            onChange={(e) => setTrialEndDate(e.target.value)}
-            required={isTrial}
-            className="neumo-input border-0 focus-visible:ring-primary"
-          />
-        </div>
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="trialEndDate" className="text-foreground">
+              Tanggal Berakhir Trial
+            </Label>
+            <Input
+              id="trialEndDate"
+              type="date"
+              value={trialEndDate}
+              onChange={(e) => setTrialEndDate(e.target.value)}
+              required={isTrial}
+              className="neumo-input border-0 focus-visible:ring-primary"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="trialFee" className="text-foreground">
+              Biaya Trial (Opsional)
+            </Label>
+            <Input
+              id="trialFee"
+              type="text"
+              inputMode="numeric"
+              placeholder="0 - kosongkan jika gratis"
+              value={trialFee}
+              onChange={(e) => setTrialFee(formatNumber(e.target.value))}
+              className="neumo-input h-12 border-0 focus-visible:ring-primary"
+            />
+            <p className="text-xs text-muted-foreground">
+              Biaya admin atau deposit untuk trial (jika ada)
+            </p>
+          </div>
+        </>
       )}
 
       {/* Auto Renew */}

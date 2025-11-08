@@ -3,6 +3,7 @@ import { StatsCard } from "@/components/dashboard/StatsCard";
 import { UpcomingSubscriptions } from "@/components/dashboard/UpcomingSubscriptions";
 import { CreditCard, TrendingUp, Calendar, DollarSign, Plus, ArrowUpRight } from "lucide-react";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
+import { useTotalExpenses } from "@/hooks/useTotalExpenses";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,8 +12,9 @@ export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { data: subscriptions = [], isLoading } = useSubscriptions();
+  const { data: totalExpenses = 0, isLoading: isLoadingExpenses } = useTotalExpenses();
 
-  const activeSubscriptions = subscriptions.filter(s => s.status === 'active');
+  const activeSubscriptions = subscriptions.filter(s => s.status === 'active' || s.status === 'trial');
   const totalMonthly = activeSubscriptions.reduce((sum, sub) => {
     const amount = Number(sub.price);
     return sum + (sub.billing_cycle === 'monthly' ? amount : 
@@ -77,19 +79,19 @@ export default function Dashboard() {
         <StatsCard
           title="Total Langganan"
           value={activeSubscriptions.length.toString()}
-          subtitle="Langganan aktif"
+          subtitle="Aktif & Trial"
           icon={CreditCard}
         />
         <StatsCard
-          title="Pengeluaran Bulanan"
-          value={formatCurrency(totalMonthly)}
-          subtitle="Estimasi per bulan"
+          title="Total Pengeluaran"
+          value={formatCurrency(totalExpenses)}
+          subtitle="Total yang sudah dibayar"
           icon={DollarSign}
         />
         <StatsCard
-          title="Total Semua"
-          value={subscriptions.length.toString()}
-          subtitle="Termasuk tidak aktif"
+          title="Estimasi Bulanan"
+          value={formatCurrency(totalMonthly)}
+          subtitle="Berdasarkan langganan aktif"
           icon={Calendar}
         />
         <StatsCard

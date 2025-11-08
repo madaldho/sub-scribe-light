@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSubscription, useDeleteSubscription, useUpdateSubscriptionStatus } from "@/hooks/useSubscriptions";
 import { usePaymentHistory, useMarkAsPaid } from "@/hooks/usePaymentHistory";
-import { useAuditLog } from "@/hooks/useAuditLog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
@@ -25,7 +24,6 @@ const SubscriptionDetail = () => {
   const { id } = useParams();
   const { data: subscription, isLoading } = useSubscription(id!);
   const { data: paymentHistory } = usePaymentHistory(id!);
-  const { data: auditLogs } = useAuditLog(id!);
   const deleteSubscription = useDeleteSubscription();
   const markAsPaid = useMarkAsPaid();
   const updateStatus = useUpdateSubscriptionStatus();
@@ -220,6 +218,15 @@ const SubscriptionDetail = () => {
               </p>
             </div>
 
+            {subscription.is_trial && subscription.trial_fee && subscription.trial_fee > 0 && (
+              <div className="neumo-card p-4 rounded-xl bg-background-elevated">
+                <p className="text-sm text-foreground-muted mb-1">Biaya Trial</p>
+                <p className="text-lg font-semibold text-foreground">
+                  {formatCurrency(subscription.trial_fee, subscription.currency)}
+                </p>
+              </div>
+            )}
+
             {subscription.payment_method && (
               <div className="neumo-card p-4 rounded-xl bg-background-elevated">
                 <div className="flex items-center gap-2 mb-1">
@@ -374,45 +381,6 @@ const SubscriptionDetail = () => {
               <p className="text-sm text-foreground-muted">
                 Klik "Tandai Bayar" untuk mencatat pembayaran pertama
               </p>
-            </div>
-          )}
-        </div>
-
-        {/* Audit Log */}
-        <div className="neumo-card p-6 md:p-8">
-          <h2 className="text-xl font-bold text-foreground mb-6">Riwayat Perubahan</h2>
-          
-          {auditLogs && auditLogs.length > 0 ? (
-            <div className="space-y-3">
-              {auditLogs.map((log) => (
-                <div
-                  key={log.id}
-                  className="neumo-card p-4 rounded-xl"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="neumo-card p-2 rounded-lg bg-primary/10">
-                      <Calendar className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-foreground capitalize">{log.action}</p>
-                      <p className="text-sm text-foreground-muted">
-                        {format(new Date(log.created_at), "d MMMM yyyy, HH:mm", { locale: localeId })}
-                      </p>
-                    </div>
-                  </div>
-                  {log.changes && (
-                    <div className="ml-11 text-sm text-foreground-muted">
-                      <pre className="whitespace-pre-wrap bg-background-elevated p-2 rounded">
-                        {JSON.stringify(log.changes, null, 2)}
-                      </pre>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-foreground-muted">Belum ada riwayat perubahan</p>
             </div>
           )}
         </div>
