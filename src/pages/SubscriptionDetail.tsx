@@ -209,9 +209,14 @@ const SubscriptionDetail = () => {
             </div>
 
             <div className="neumo-card p-4 rounded-xl bg-background-elevated">
-              <p className="text-sm text-foreground-muted mb-1">Jatuh Tempo Berikutnya</p>
+              <p className="text-sm text-foreground-muted mb-1">
+                {subscription.is_trial && subscription.trial_end_date ? "Jatuh Tempo Trial" : "Jatuh Tempo Berikutnya"}
+              </p>
               <p className="text-xl font-semibold text-foreground">
-                {format(new Date(subscription.next_billing_date), "d MMMM yyyy", { locale: localeId })}
+                {subscription.is_trial && subscription.trial_end_date 
+                  ? format(new Date(subscription.trial_end_date), "d MMMM yyyy", { locale: localeId })
+                  : format(new Date(subscription.next_billing_date), "d MMMM yyyy", { locale: localeId })
+                }
               </p>
             </div>
 

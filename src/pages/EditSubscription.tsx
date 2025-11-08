@@ -27,6 +27,7 @@ const EditSubscription = () => {
   const [isTrial, setIsTrial] = useState(false);
   const [trialEndDate, setTrialEndDate] = useState("");
   const [priceDisplay, setPriceDisplay] = useState("");
+  const [customNextBilling, setCustomNextBilling] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -70,6 +71,7 @@ const EditSubscription = () => {
       setLogoUrl(subscription.logo_url || "");
       setIsTrial(subscription.is_trial || false);
       setTrialEndDate(subscription.trial_end_date || "");
+      setCustomNextBilling(subscription.next_billing_date || "");
     }
   }, [subscription]);
 
@@ -98,7 +100,8 @@ const EditSubscription = () => {
       return;
     }
 
-    const { nextBillingDate } = calculateNextBillingDate(formData.startDate, period);
+    // Use custom next billing date if provided, otherwise calculate
+    const nextBillingDate = customNextBilling || calculateNextBillingDate(formData.startDate, period).nextBillingDate;
 
     const updateData = {
       id: subscription.id,
@@ -303,6 +306,23 @@ const EditSubscription = () => {
                 className="neumo-input h-12 border-0 focus-visible:ring-primary"
                 required
               />
+            </div>
+
+            {/* Custom Next Billing Date */}
+            <div className="space-y-2">
+              <Label htmlFor="customNextBilling" className="text-foreground">
+                Jatuh Tempo Custom (Opsional)
+              </Label>
+              <Input
+                id="customNextBilling"
+                type="date"
+                value={customNextBilling}
+                onChange={(e) => setCustomNextBilling(e.target.value)}
+                className="neumo-input h-12 border-0 focus-visible:ring-primary"
+              />
+              <p className="text-xs text-muted-foreground">
+                Kosongkan untuk menggunakan perhitungan otomatis berdasarkan periode
+              </p>
             </div>
 
             {/* Category */}
