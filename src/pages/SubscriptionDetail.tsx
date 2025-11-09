@@ -79,11 +79,27 @@ const SubscriptionDetail = () => {
     updateStatus.mutate({ id: subscription.id, status: 'cancelled' });
   };
 
-  const formatCurrency = (amount: number, currency: string) => {
-    if (currency === "IDR") {
-      return `Rp ${amount.toLocaleString("id-ID")}`;
-    }
-    return `${currency} ${amount}`;
+  const formatCurrency = (amount: number, currency: string = "IDR") => {
+    const currencySymbols: Record<string, string> = {
+      IDR: "Rp",
+      USD: "$",
+      EUR: "€",
+      GBP: "£",
+      SGD: "S$",
+      MYR: "RM",
+      JPY: "¥",
+      CNY: "¥",
+      AUD: "A$",
+      CAD: "C$",
+    };
+
+    const symbol = currencySymbols[currency] || currency;
+    const formatted = new Intl.NumberFormat('id-ID', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+
+    return `${symbol} ${formatted}`;
   };
 
   if (isLoading) {
@@ -207,12 +223,19 @@ const SubscriptionDetail = () => {
 
           {/* Details Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="neumo-card p-4 rounded-xl bg-background-elevated">
-              <p className="text-sm text-foreground-muted mb-1">Harga/Periode</p>
-              <p className="text-2xl font-bold text-foreground">
-                {formatCurrency(subscription.price, subscription.currency)}
-              </p>
-            </div>
+            {subscription.price && subscription.price > 0 && (
+              <div className="neumo-card p-4 rounded-xl bg-background-elevated">
+                <p className="text-sm text-foreground-muted mb-1">Harga/Periode</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {formatCurrency(subscription.price, subscription.currency)}
+                </p>
+                {subscription.currency !== 'IDR' && (
+                  <p className="text-xs text-foreground-muted mt-1">
+                    ≈ {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(subscription.price * 15800)}
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className="neumo-card p-4 rounded-xl bg-background-elevated">
               <p className="text-sm text-foreground-muted mb-1">

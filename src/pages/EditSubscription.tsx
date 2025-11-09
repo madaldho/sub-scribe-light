@@ -93,11 +93,6 @@ const EditSubscription = () => {
       return;
     }
     
-    if (!price || price <= 0) {
-      toast.error("Harga harus lebih dari 0");
-      return;
-    }
-    
     if (!formData.startDate) {
       toast.error("Tanggal mulai harus diisi");
       return;
@@ -110,7 +105,7 @@ const EditSubscription = () => {
       id: subscription.id,
       name: formData.name,
       description: formData.description || null,
-      price: price,
+      price: price || 0,
       currency: formData.currency || "IDR",
       billing_cycle: period,
       start_date: formData.startDate,
@@ -230,7 +225,7 @@ const EditSubscription = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="price" className="text-foreground">
-                  Harga
+                  Harga <span className="text-muted-foreground text-xs">(opsional)</span>
                 </Label>
                 <Input
                   id="price"
@@ -240,13 +235,7 @@ const EditSubscription = () => {
                   onChange={handlePriceChange}
                   placeholder="0"
                   className="neumo-input h-12 border-0 focus-visible:ring-primary"
-                  required
                 />
-                {priceDisplay && (
-                  <p className="text-xs text-muted-foreground">
-                    Harga: {priceDisplay}
-                  </p>
-                )}
               </div>
               
               <div className="space-y-2">
@@ -258,9 +247,16 @@ const EditSubscription = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
-                    <SelectItem value="IDR">IDR</SelectItem>
-                    <SelectItem value="USD">USD</SelectItem>
-                    <SelectItem value="EUR">EUR</SelectItem>
+                    <SelectItem value="IDR">IDR (Rp)</SelectItem>
+                    <SelectItem value="USD">USD ($)</SelectItem>
+                    <SelectItem value="EUR">EUR (€)</SelectItem>
+                    <SelectItem value="GBP">GBP (£)</SelectItem>
+                    <SelectItem value="SGD">SGD (S$)</SelectItem>
+                    <SelectItem value="MYR">MYR (RM)</SelectItem>
+                    <SelectItem value="JPY">JPY (¥)</SelectItem>
+                    <SelectItem value="CNY">CNY (¥)</SelectItem>
+                    <SelectItem value="AUD">AUD (A$)</SelectItem>
+                    <SelectItem value="CAD">CAD (C$)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

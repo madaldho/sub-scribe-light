@@ -61,12 +61,27 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
     "paused": "Dijeda"
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
+  const formatCurrency = (amount: number, currency: string = "IDR") => {
+    const currencySymbols: Record<string, string> = {
+      IDR: "Rp",
+      USD: "$",
+      EUR: "€",
+      GBP: "£",
+      SGD: "S$",
+      MYR: "RM",
+      JPY: "¥",
+      CNY: "¥",
+      AUD: "A$",
+      CAD: "C$",
+    };
+
+    const symbol = currencySymbols[currency] || currency;
+    const formatted = new Intl.NumberFormat('id-ID', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(amount);
+
+    return `${symbol} ${formatted}`;
   };
 
   const daysRemaining = getDaysRemaining(subscription.next_billing_date);
@@ -155,9 +170,16 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
               {format(parseISO(subscription.next_billing_date), 'd MMM yyyy', { locale: id })}
             </span>
           </div>
-          <span className="text-lg font-bold text-foreground">
-            {formatCurrency(Number(subscription.price))}
-          </span>
+          <div className="text-right">
+            <span className="text-lg font-bold text-foreground block">
+              {formatCurrency(Number(subscription.price), subscription.currency)}
+            </span>
+            {subscription.currency !== 'IDR' && subscription.price > 0 && (
+              <span className="text-xs text-muted-foreground">
+                ≈ {formatCurrency(Number(subscription.price) * 15800, 'IDR')}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
