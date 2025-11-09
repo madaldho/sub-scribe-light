@@ -18,11 +18,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Subscription, useDeleteSubscription } from "@/hooks/useSubscriptions";
+import { Subscription, useDeleteSubscription, useUpdateSubscriptionStatus } from "@/hooks/useSubscriptions";
 import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TrialBadge } from "./TrialBadge";
+import { getDaysRemaining } from "@/lib/dateUtils";
 
 interface SubscriptionCardProps {
   subscription: Subscription;
@@ -31,7 +32,18 @@ interface SubscriptionCardProps {
 export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
   const navigate = useNavigate();
   const deleteSubscription = useDeleteSubscription();
+  const updateStatus = useUpdateSubscriptionStatus();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  // Auto-cancel expired subscriptions
+  useEffect(() => {
+    if (subscription.status === 'active' || subscription.status === 'trial') {
+      const daysRemaining = getDaysRemaining(subscription.next_billing_date);
+      if (daysRemaining < 0) {
+        updateStatus.mutate({ id: subscription.id, status: 'cancelled' });
+      }
+    }
+  }, [subscription.id, subscription.status, subscription.next_billing_date]);
 
   const statusColors = {
     "active": "text-success bg-success/10 border-success/30",
@@ -56,6 +68,9 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
       minimumFractionDigits: 0
     }).format(amount);
   };
+
+  const daysRemaining = getDaysRemaining(subscription.next_billing_date);
+  const isExpiringSoon = daysRemaining <= 7 && daysRemaining >= 0;
 
   return (
     <div 
@@ -116,6 +131,14 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
         >
           {statusLabels[subscription.status as keyof typeof statusLabels]}
         </Badge>
+        {(subscription.status === 'active' || subscription.status === 'trial') && daysRemaining >= 0 && (
+          <Badge 
+            variant="outline" 
+            className={`${isExpiringSoon ? 'border-warning/30 text-warning' : 'border-muted/30 text-muted-foreground'} text-xs`}
+          >
+            {daysRemaining} hari lagi
+          </Badge>
+        )}
         {subscription.is_trial && subscription.trial_end_date && (
           <TrialBadge 
             isTrial={subscription.is_trial} 
