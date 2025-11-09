@@ -132,9 +132,17 @@ const SubscriptionDetail = () => {
         <div className="neumo-card p-6 md:p-8 mb-6">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-4">
-              <div className="neumo-card p-5 rounded-2xl text-4xl bg-background-elevated">
-                🎯
-              </div>
+              {subscription.logo_url ? (
+                <img 
+                  src={subscription.logo_url} 
+                  alt={subscription.name} 
+                  className="w-20 h-20 rounded-2xl object-contain neumo-card p-3 bg-background-elevated" 
+                />
+              ) : (
+                <div className="neumo-card p-5 rounded-2xl text-4xl bg-background-elevated w-20 h-20 flex items-center justify-center text-primary font-bold">
+                  {subscription.name.charAt(0)}
+                </div>
+              )}
               <div>
                 <h1 className="text-3xl font-bold text-foreground mb-2">
                   {subscription.name}
