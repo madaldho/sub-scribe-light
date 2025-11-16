@@ -47,7 +47,7 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen p-4 md:p-6 lg:p-8 pt-6 md:pt-8">
-      <div className="max-w-2xl mx-auto px-0">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
@@ -107,7 +107,7 @@ export default function Settings() {
             </div>
             <div>
               <p className="font-medium mb-2">Kirim pengingat</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground break-words">
                 Saat ini: {preferences?.notification_preferences?.days_before?.join(', ') || '7, 3, 1'} hari sebelum jatuh tempo
               </p>
             </div>
@@ -177,10 +177,10 @@ export default function Settings() {
                   Hapus Akun
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="bg-card border-border">
+              <AlertDialogContent className="bg-card border-border sm:max-w-md mx-4">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="text-foreground">Hapus Akun</AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogDescription className="break-words">
                     Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus secara permanen.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

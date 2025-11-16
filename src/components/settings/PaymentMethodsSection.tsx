@@ -71,10 +71,10 @@ export function PaymentMethodsSection() {
                 Tambah
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-card border-border">
+            <DialogContent className="bg-card border-border sm:max-w-md mx-4">
               <DialogHeader>
                 <DialogTitle className="text-foreground">Tambah Metode Pembayaran</DialogTitle>
-                <DialogDescription>Tambahkan metode pembayaran baru untuk langganan</DialogDescription>
+                <DialogDescription className="break-words">Tambahkan metode pembayaran baru untuk langganan</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -184,10 +184,10 @@ export function PaymentMethodsSection() {
         )}
 
         <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-          <AlertDialogContent className="bg-card border-border">
+          <AlertDialogContent className="bg-card border-border sm:max-w-md mx-4">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-foreground">Hapus Metode Pembayaran</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogDescription className="break-words">
                 Apakah Anda yakin ingin menghapus metode pembayaran ini?
               </AlertDialogDescription>
             </AlertDialogHeader>

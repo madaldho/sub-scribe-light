@@ -83,7 +83,7 @@ export function BackupRestore() {
       <CardContent className="space-y-4">
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
+          <AlertDescription className="break-words">
             Backup akan menyimpan semua langganan dan metode pembayaran. Restore akan menggabungkan data, bukan menimpa.
           </AlertDescription>
         </Alert>
