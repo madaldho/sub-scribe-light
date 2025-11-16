@@ -71,10 +71,10 @@ export function PaymentMethodsSection() {
                 Tambah
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-card border-border">
+            <DialogContent className="bg-card border-border sm:max-w-md mx-4">
               <DialogHeader>
                 <DialogTitle className="text-foreground">Tambah Metode Pembayaran</DialogTitle>
-                <DialogDescription>Tambahkan metode pembayaran baru untuk langganan</DialogDescription>
+                <DialogDescription className="break-words">Tambahkan metode pembayaran baru untuk langganan</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -155,18 +155,18 @@ export function PaymentMethodsSection() {
             {paymentMethods.map((method) => (
               <div
                 key={method.id}
-                className="flex items-center justify-between gap-3 p-4 rounded-lg border border-border hover:border-primary/30 transition-colors"
+                className="flex items-center justify-between gap-2 sm:gap-3 p-3 sm:p-4 rounded-lg border border-border hover:border-primary/30 transition-colors overflow-hidden"
               >
-                <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 overflow-hidden">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: method.color + '20', color: method.color }}
                   >
-                    <CreditCard className="h-5 w-5" />
+                    <CreditCard className="h-4 w-4 sm:h-5 sm:w-5" />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-foreground truncate">{method.name}</p>
-                    <p className="text-sm text-muted-foreground truncate">{method.provider} • {method.type}</p>
+                  <div className="min-w-0 flex-1 overflow-hidden">
+                    <p className="font-medium text-foreground truncate text-sm sm:text-base">{method.name}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground truncate">{method.provider} • {method.type}</p>
                   </div>
                 </div>
                 <Button
@@ -174,9 +174,9 @@ export function PaymentMethodsSection() {
                   size="icon"
                   onClick={() => setDeleteId(method.id)}
                   aria-label={`Hapus metode pembayaran ${method.name}`}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Button>
               </div>
             ))}
@@ -184,10 +184,10 @@ export function PaymentMethodsSection() {
         )}
 
         <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-          <AlertDialogContent className="bg-card border-border">
+          <AlertDialogContent className="bg-card border-border sm:max-w-md mx-4">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-foreground">Hapus Metode Pembayaran</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogDescription className="break-words">
                 Apakah Anda yakin ingin menghapus metode pembayaran ini?
               </AlertDialogDescription>
             </AlertDialogHeader>
